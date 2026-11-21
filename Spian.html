@@ -1,0 +1,643 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="spian-version" content="2026-11-17.13"><meta name="theme-color" content="#09080e"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="format-detection" content="telephone=no"><title>Spian</title>
+<style>
+:root{--ink:#09080e;--rail:#0d0b14;--panel:#131019;--raise:#1b1826;--line:#282438;--tx:#ece9f7;--mut:#8f8aa8;--vi:#8b5cf6;--vi2:#b79cff;--red:#f0506e;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme=light]{--ink:#f4f2fa;--rail:#e6e2f2;--panel:#fbfaff;--raise:#ebe8f6;--line:#d9d4ea;--tx:#1b1829;--mut:#6c6784;color-scheme:light}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font:15px/1.5 ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,sans-serif;background:var(--ink);color:var(--tx);overflow:hidden}
+button,textarea,input{font:inherit;color:inherit}
+button{background:var(--vi);color:#fff;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600}button:hover{filter:brightness(1.12)}
+button.ghost{background:var(--raise);color:var(--tx)}button.danger{background:var(--red)}button.ic{background:transparent;color:var(--tx);padding:6px 9px;font-size:18px}
+input,textarea{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}:focus-visible{outline:2px solid var(--vi2);outline-offset:2px}
+#app{height:100%;display:grid;grid-template-columns:260px minmax(0,1fr)}
+#side{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.brand{display:flex;align-items:center;gap:12px;padding:16px;font-weight:800;font-size:19px;border-bottom:1px solid var(--line)}
+.brand i{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:22px;color:#fff;background:linear-gradient(135deg,#8b5cf6,#4c1d95);box-shadow:0 6px 18px rgba(139,92,246,.4)}
+#chans{flex:1;overflow-y:auto;padding:10px}.ch{display:flex;gap:8px;padding:7px 10px;border-radius:9px;color:var(--mut);cursor:pointer}
+.ch:hover{background:var(--raise);color:var(--tx)}.ch.on{background:var(--raise);color:var(--tx);box-shadow:inset 3px 0 var(--vi)}.ch.un{color:var(--tx);font-weight:700}.ch span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ch a{opacity:0;color:var(--mut)}.ch:hover a{opacity:1}
+#me{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--rail)}#me b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff}
+main{display:flex;flex-direction:column;min-width:0}header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);min-height:57px}
+h1{margin:0;font-size:17px;flex:1}#nav{display:none}
+#msgs{flex:1;overflow-y:auto;padding:16px 0}.row{display:flex;gap:14px;padding:2px 20px;position:relative}.row:hover{background:var(--panel)}.row.first{margin-top:14px;padding-top:4px}
+.gut{width:40px;flex:none;color:var(--mut);font-size:11px;text-align:right;padding-top:5px;visibility:hidden}.row:hover .gut{visibility:visible}
+.bd{min-width:0;flex:1}.hd b{margin-right:8px}.hd small,.ed{color:var(--mut);font-size:12px}.t{white-space:pre-wrap;word-break:break-word}
+.act{position:absolute;right:20px;top:-12px;display:none;gap:2px;background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:2px}.row:hover .act{display:flex}.act button{background:transparent;color:var(--mut);padding:3px 8px;font-size:13px}
+pre{background:var(--rail);border:1px solid var(--line);padding:10px 12px;border-radius:10px;overflow-x:auto;white-space:pre}code{background:var(--rail);padding:1px 6px;border-radius:6px}
+.empty{margin:auto;max-width:360px;text-align:center;color:var(--mut);padding:40px 20px}.empty h2{color:var(--tx)}
+footer{padding:0 16px 16px}#eb{display:none;font-size:12px;color:var(--vi2);padding:0 6px 6px}#mi{resize:none;max-height:180px;border-radius:14px;padding:12px 14px;background:var(--raise)}
+dialog{background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:18px;padding:22px;width:min(380px,92vw)}dialog::backdrop{background:rgba(0,0,0,.6)}dialog h2{margin:0 0 12px}.g{display:grid;gap:10px;margin-bottom:14px}.btns{display:flex;gap:8px;justify-content:flex-end}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:10px 16px;border-radius:12px;display:none;max-width:90vw}
+@media(max-width:700px){#app{grid-template-columns:minmax(0,1fr)}#side{display:none}#nav{display:block}body.nav #side{display:flex;position:fixed;inset:0 auto 0 0;width:270px;z-index:20}.act{top:-8px}.row.sel .act{display:flex}.gut{display:none}}
+
+#land{height:100%;display:grid;place-items:center;overflow:auto}#land .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:28px;width:min(400px,92vw);display:grid;gap:12px}
+#land h1{margin:0;font-size:30px}#land p{margin:0;color:var(--mut)}hr{border:0;border-top:1px solid var(--line);width:100%}
+#app{display:none}.mem{padding:3px 10px;color:var(--mut);font-size:13px;display:flex;gap:8px;align-items:center}.mem i{width:8px;height:8px;border-radius:50%;background:#3ddc97}
+#code{margin:8px 10px;padding:8px 10px;border-radius:10px;background:var(--raise);font-size:13px;cursor:pointer}
+dialog{overflow:hidden}input[type=color]{width:64px;height:36px;padding:2px}label{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--mut);font-size:13px}
+.av.img{background-size:cover!important;background-position:center;color:transparent}.mem .av{width:28px;height:28px;font-size:12px}
+.sd{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.pfc .bn{height:84px;margin:-22px -22px 0}.pfc .big{width:72px;height:72px;font-size:30px;margin:-36px 0 8px 4px;border:5px solid var(--panel)}
+.pfc small{color:var(--mut)}.pfc p{margin:8px 0 0;white-space:pre-wrap;word-break:break-word}#mine{display:flex;gap:10px;align-items:center;flex:1;min-width:0;cursor:pointer}
+#shell{display:none;height:100%;grid-template-columns:76px minmax(0,1fr)}#srail{background:var(--rail);display:flex;flex-direction:column;align-items:center;gap:12px;padding:14px 0;overflow-y:auto}
+#frames{position:relative;min-width:0}#frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:var(--ink)}
+.sv{position:relative;width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff;cursor:pointer;transition:border-radius .2s}
+.sv:hover,.sv.on{border-radius:16px}.sv.on::before{content:"";position:absolute;left:-14px;top:12px;width:5px;height:24px;border-radius:0 4px 4px 0;background:var(--tx)}
+.sv .ud{position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:var(--red);border:3px solid var(--rail)}.sv.add{background:var(--raise);color:#3ddc97;font-size:26px}
+.rx{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--raise);color:var(--tx);font-size:10px;display:grid;place-items:center;border:1px solid var(--line)}
+.logo{width:48px;height:48px;flex:none;border-radius:16px;display:grid;place-items:center;font-weight:900;font-size:24px;color:#fff;background:linear-gradient(135deg,#8b5cf6,#4c1d95);box-shadow:0 6px 18px rgba(139,92,246,.4)}
+@media(max-width:700px){#shell{grid-template-columns:60px minmax(0,1fr)}.sv,.logo{width:42px;height:42px}}
+dialog.wide{width:min(540px,94vw);padding:0}dialog.scroll{max-height:92vh;overflow:auto}
+label input:not([type=color]),label textarea{width:62%}.sl{background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px;color:var(--tx);width:62%}
+.pg{--ac:#8b5cf6}.pg .bn{height:150px;background-size:cover!important}.pg .ava{position:relative;width:104px;margin:-52px 0 0 22px}.pg .ava .av{width:104px;height:104px;font-size:42px;border:6px solid var(--panel)}
+.pg .ava .sd{position:absolute;right:6px;bottom:8px;width:20px;height:20px;border:4px solid var(--panel);margin:0}
+.pg .in{padding:10px 24px 24px}.pg h2{margin:6px 0 0;font-size:24px}.pg .un{color:var(--mut)}.pg h4{margin:18px 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}
+.pg p{margin:0;white-space:pre-wrap;word-break:break-word}.chip{display:inline-block;margin:0 6px 6px 0;padding:2px 11px;border-radius:99px;font-size:12px;border:1px solid var(--ac);color:var(--ac)}.chip.fill{color:#fff;border-color:transparent}
+#empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--mut);padding:20px;gap:6px}#empty h2{color:var(--tx);margin:0}#empty p{margin:0}#empty button{padding:6px 16px;font-size:13px;margin-top:8px}
+.dc{background:var(--raise);border-radius:14px;padding:12px;display:flex;gap:12px;align-items:center}.dc .av{flex:none}
+html,body{height:100dvh}#app,#shell,#land{height:100dvh}input,textarea,select{font-size:16px}
+#msgs{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}#cw{display:flex;gap:8px;align-items:flex-end}#cw #mi{flex:1}#sb{height:46px;min-width:48px;border-radius:14px;padding:0;font-size:18px}
+footer{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}dialog.scroll{max-height:92dvh}#scrim{display:none}
+@media(max-width:700px){body.nav #scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19}.sv,.logo{width:44px;height:44px}button{min-height:40px}.row{padding:2px 12px}.row.first{margin-top:12px}#top,header{padding:8px 12px}
+ #srail{padding-left:env(safe-area-inset-left,0px)}dialog{width:94vw}.act button{padding:8px 12px;font-size:14px}.ch{padding:11px 12px}}
+#upd{display:none;position:fixed;top:0;left:0;right:0;z-index:200;background:var(--vi);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;text-align:center;font-weight:600}#upd button{margin-left:10px;background:#fff;color:#4c1d95;padding:4px 12px;min-height:0}
+.sec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);padding:12px 10px 4px}.ch .cnt{color:var(--mut);font-size:12px;flex:none}.ch.vc.on{box-shadow:inset 3px 0 #3ddc97}
+.vbox{padding:0 6px 4px 14px}.vu{display:flex;align-items:center;gap:8px;padding:3px 6px;border-radius:8px;font-size:14px;color:var(--mut);overflow:hidden}
+.vu .av{width:26px;height:26px;font-size:11px;transition:box-shadow .15s}.vu.speak{color:var(--tx)}.vu.speak .av{box-shadow:0 0 0 3px #3ddc97}
+.vu .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vu .mic{font-size:13px}.vu .net{font-size:12px;opacity:.9}.vu .vol{width:58px;padding:0;height:4px;border:0}
+.vu.in{animation:vin .25s ease}.vu.out{animation:vout .22s ease forwards}
+@keyframes vin{from{opacity:0;transform:translateX(-10px);max-height:0}to{opacity:1;transform:none;max-height:44px}}@keyframes vout{to{opacity:0;transform:translateX(-10px);max-height:0;padding:0}}
+#vpanel{display:none;margin:0 10px 8px;padding:10px;border-radius:14px;background:var(--raise)}#vpanel .vst{display:flex;align-items:center;gap:8px}#vdot{width:10px;height:10px;border-radius:50%;background:var(--mut)}
+#vpanel small{display:block;color:var(--mut);margin:2px 0 8px}.vbt{display:flex;gap:6px;flex-wrap:wrap}.vbt button{flex:1;padding:6px 8px;font-size:13px;min-width:0}
+#vload{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);place-items:center}.vbox2{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;text-align:center;width:min(340px,90vw)}
+.spin{width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--vi);border-radius:50%;margin:0 auto 12px;animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}#vload.err .spin{display:none}
+@media(prefers-reduced-motion:reduce){.vu.in,.vu.out,.spin{animation:none}}
+.av{position:relative}
+.dc-neon::before{content:"";position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(#8b5cf6,#38bdf8,#f472b6,#8b5cf6);-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 3px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,#0000 calc(100% - 3px),#000 calc(100% - 3px));animation:dspin 3s linear infinite;pointer-events:none}
+@keyframes dspin{to{transform:rotate(360deg)}}
+.dc-aurora{animation:daur 3s ease-in-out infinite}@keyframes daur{0%,100%{box-shadow:0 0 0 3px #8b5cf6,0 0 14px 3px #38bdf8}50%{box-shadow:0 0 0 3px #f472b6,0 0 18px 4px #8b5cf6}}
+.dc-gold{box-shadow:0 0 0 3px #fbbf24,0 0 0 5px #b45309,0 0 12px 4px rgba(251,191,36,.55)}
+.dc-frost{animation:dfrost 2.4s ease-in-out infinite}@keyframes dfrost{0%,100%{box-shadow:0 0 0 3px #bae6fd,0 0 0 4px #38bdf8,0 0 14px 3px rgba(125,211,252,.7)}50%{box-shadow:0 0 0 3px #e0f2fe,0 0 0 4px #7dd3fc,0 0 20px 6px rgba(186,230,253,.9)}}
+.dc-flame{animation:dflame .9s ease-in-out infinite alternate}@keyframes dflame{from{box-shadow:0 0 0 3px #f97316,0 0 12px 3px #ef4444}to{box-shadow:0 0 0 3px #facc15,0 0 18px 6px #f97316}}
+.dc-crown::after,.dc-halo::after,.dc-ears::after,.dc-horns::after{content:"";position:absolute;pointer-events:none}
+.dc-crown::after{top:-38%;left:18%;width:64%;height:46%;transform:rotate(-8deg);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16'%3E%3Cpath d='M2 15 L1 3 L7 9 L12 1 L17 9 L23 3 L22 15 Z' fill='%23fbbf24' stroke='%23b45309' stroke-width='1.3' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.dc-halo::after{top:-28%;left:20%;width:60%;height:22%;border:3px solid #fde68a;border-radius:50%;box-shadow:0 0 8px #fde68a,inset 0 0 6px #fde68a}
+.dc-ears::after{top:-30%;left:4%;width:92%;height:44%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cpath d='M1 12 L3 1 L10 8 Z M23 12 L21 1 L14 8 Z' fill='%23f472b6' stroke='%239d174d' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;z-index:-1}
+.dc-horns::after{top:-30%;left:4%;width:92%;height:44%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12'%3E%3Cpath d='M3 12 Q0 5 7 0 Q4 6 8.5 10 Z M21 12 Q24 5 17 0 Q20 6 15.5 10 Z' fill='%23ef4444' stroke='%237f1d1d' stroke-width='.8' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;z-index:-1}
+.vu .av::after{display:none}.vu.speak .av{box-shadow:0 0 0 3px #3ddc97!important;animation:none}
+@media(prefers-reduced-motion:reduce){.dc-neon::before,.dc-aurora,.dc-frost,.dc-flame{animation:none}}
+@keyframes dpulse{0%,100%{filter:drop-shadow(0 0 2px var(--c2))}50%{filter:drop-shadow(0 0 10px var(--c2))}}
+.dc-custom.dcs-ring{box-shadow:0 0 0 var(--w) var(--c1),0 0 0 calc(var(--w) + 2px) var(--c2)}
+.dc-custom.dcs-glow{box-shadow:0 0 0 2px var(--c1),0 0 calc(var(--w)*4) calc(var(--w)*1.2) var(--c2)}
+.dc-custom.dcs-grad::before{content:"";position:absolute;inset:calc(var(--w)*-1 - 2px);border-radius:50%;background:conic-gradient(var(--c1),var(--c2),var(--c1));-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - var(--w)),#000 calc(100% - var(--w)));mask:radial-gradient(farthest-side,#0000 calc(100% - var(--w)),#000 calc(100% - var(--w)));pointer-events:none}
+.dc-custom.dca-spin.dcs-grad::before{animation:dspin 3s linear infinite}.dc-custom.dca-pulse{animation:dpulse 1.6s ease-in-out infinite}
+.dc-custom.hasacc::after{content:"";position:absolute;top:-40%;left:20%;width:60%;height:60%;background:var(--acc) center/contain no-repeat;pointer-events:none}
+.dc-image::before{content:"";position:absolute;inset:-20%;background:var(--dimg) center/contain no-repeat;pointer-events:none;z-index:2}
+@media(prefers-reduced-motion:reduce){.dc-custom.dca-spin::before,.dc-custom.dca-pulse{animation:none}}
+
+/* ===== Spian visual refresh ===== */
+:root{--ink:#0b0a12;--rail:#07060c;--panel:#110f1b;--raise:#191627;--line:rgba(255,255,255,.075);--tx:#edebf7;--mut:#8f8ba9;--vi:#7c5cff;--vi2:#a897ff;--red:#ff5470;--grn:#3ddc97;--glow:0 8px 28px rgba(124,92,255,.28)}
+:root[data-theme=light]{--ink:#f4f3fa;--rail:#e7e4f3;--panel:#ffffff;--raise:#f0eef9;--line:rgba(24,18,60,.1);--tx:#16132a;--mut:#69657f;--glow:0 8px 24px rgba(124,92,255,.22)}
+*{scrollbar-width:thin;scrollbar-color:rgba(140,130,180,.35) transparent}*::-webkit-scrollbar{width:8px;height:8px}*::-webkit-scrollbar-thumb{background:rgba(140,130,180,.3);border-radius:8px}*::-webkit-scrollbar-track{background:transparent}
+body{font:15px/1.55 "Inter","SF Pro Text","Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;background:radial-gradient(1100px 520px at 18% -8%,rgba(124,92,255,.13),transparent 62%),var(--ink)}
+button{background:linear-gradient(135deg,#8a6bff,#5a3ef2);box-shadow:0 2px 10px rgba(124,92,255,.28);border-radius:10px;font-weight:600;letter-spacing:.01em;transition:transform .12s,box-shadow .15s,filter .15s}
+button:hover{filter:brightness(1.1);transform:translateY(-1px)}button:active{transform:none}
+button.ghost{background:var(--raise);border:1px solid var(--line);box-shadow:none;color:var(--tx)}button.danger{background:linear-gradient(135deg,#ff6b84,#e63a5a);box-shadow:0 2px 10px rgba(255,84,112,.25)}button.ic{background:transparent;border:0;box-shadow:none;color:var(--tx)}button.ic:hover{background:var(--raise);transform:none}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none;filter:none}
+input,textarea,select{background:var(--ink);border:1px solid var(--line);border-radius:10px;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--vi);box-shadow:0 0 0 3px rgba(124,92,255,.2)}
+#app{grid-template-columns:272px minmax(0,1fr) 250px}
+#side{background:var(--panel);border-right:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;padding:14px;border-bottom:1px solid var(--line);font-size:16px;font-weight:700}
+.brand i{width:38px;height:38px;border-radius:12px;font-size:19px;box-shadow:var(--glow)}.brand .bt{min-width:0;flex:1;display:flex;flex-direction:column;line-height:1.2}.brand .bt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.brand small{font-size:12px;font-weight:500;color:var(--mut)}
+#tools{display:flex;gap:6px}.tb{width:34px;height:34px;min-height:0;padding:0;border-radius:10px;background:var(--raise);border:1px solid var(--line);box-shadow:none;font-size:16px;display:grid;place-items:center;color:var(--tx)}.tb:hover{background:rgba(124,92,255,.18)}
+#code{margin:12px 14px 4px;padding:8px 12px;border-radius:10px;background:var(--raise);border:1px dashed var(--line);font-size:12px;color:var(--mut);text-align:center;cursor:pointer;transition:border-color .15s,color .15s}#code:hover{border-color:var(--vi);color:var(--tx)}
+#pubb{margin:6px 14px 0;padding:6px 12px;font-size:12px;border-radius:999px}
+#chans{padding:6px 10px 10px}.sec{padding:16px 10px 6px;font-size:11px;font-weight:700;letter-spacing:.1em}
+.ch{margin:1px 0;padding:8px 10px;border-radius:10px;font-weight:500;transition:background .12s,color .12s}.ch:hover{background:rgba(124,92,255,.09);color:var(--tx)}.ch.on{background:rgba(124,92,255,.17);color:var(--tx);box-shadow:inset 3px 0 var(--vi)}.ch.un{color:var(--tx);font-weight:700}
+.vbox{margin:0 0 4px 18px;padding:0 0 0 10px;border-left:2px solid var(--line)}.vu{border-radius:10px}.vu:hover{background:rgba(255,255,255,.04)}
+#vpanel{margin:0 12px 10px;padding:12px;border-radius:14px;background:linear-gradient(180deg,rgba(61,220,151,.09),var(--raise));border:1px solid rgba(61,220,151,.28)}
+#me{background:rgba(0,0,0,.18);border-top:1px solid var(--line);padding:10px 12px}:root[data-theme=light] #me{background:var(--raise)}
+main{background:transparent}
+header{height:58px;padding:0 18px;background:rgba(255,255,255,.015);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#tt{font-size:16px;font-weight:700;letter-spacing:.005em}#mt{display:none}
+#msgs{padding:10px 0 16px}.row{padding:3px 24px}.row:hover{background:rgba(255,255,255,.028)}:root[data-theme=light] .row:hover{background:rgba(24,18,60,.035)}.row.first{margin-top:18px;padding-top:5px}
+.row .av{width:42px;height:42px;font-size:17px;box-shadow:0 3px 10px rgba(0,0,0,.25)}.gut{width:42px}.hd b{font-weight:700}.t{line-height:1.55}
+.act{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:3px}
+pre{background:#0a0912;border:1px solid var(--line);border-radius:12px;padding:12px 14px}:root[data-theme=light] pre{background:#f1effa}code{border:1px solid var(--line);border-radius:6px}
+.empty{padding:60px 24px}.empty h2{font-size:22px;margin:0 0 8px}#empty::before{content:"💬";font-size:52px;margin-bottom:6px}#empty button{padding:10px 22px;font-size:14px}
+#typing{padding:0 26px;height:22px}
+footer{padding:0 20px calc(18px + env(safe-area-inset-bottom,0px))}
+#cw{background:var(--raise);border:1px solid var(--line);border-radius:16px;padding:6px 6px 6px 16px;gap:8px;align-items:flex-end;transition:border-color .15s,box-shadow .15s}#cw:focus-within{border-color:var(--vi);box-shadow:0 0 0 3px rgba(124,92,255,.17)}
+#mi{background:transparent;border:0;box-shadow:none!important;padding:9px 0;max-height:160px;border-radius:0}#sb{width:40px;height:40px;min-width:40px;min-height:0;border-radius:12px;padding:0;font-size:16px;display:grid;place-items:center}
+#eb{padding:0 4px 8px}
+#memcol{background:var(--panel);border-left:1px solid var(--line);overflow-y:auto;padding:16px 10px}#memcol .mh{padding:0 8px 8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.mem{padding:6px 8px;border-radius:10px;gap:10px;color:var(--tx)}.mem:hover{background:var(--raise)}.mem .av{width:34px;height:34px;font-size:13px}.mem small{color:var(--mut)}
+#srail{background:var(--rail);border-right:1px solid var(--line);padding:16px 0;gap:12px}
+.sv{border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.3);transition:transform .15s,border-radius .2s,box-shadow .2s}.sv:hover{transform:translateY(-2px);border-radius:14px}.sv.on{border-radius:14px;box-shadow:0 0 0 2px rgba(255,255,255,.14),var(--glow)}.sv.add{box-shadow:none;border:1px dashed var(--line)}
+.logo{border-radius:16px}
+dialog{border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--tx);box-shadow:0 30px 90px rgba(0,0,0,.55)}dialog[open]{animation:dpop .18s ease}dialog::backdrop{background:rgba(5,4,10,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+@keyframes dpop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+dialog h2{font-size:20px;font-weight:700}
+.dc{background:var(--raise);border:1px solid var(--line);border-radius:14px}
+#toast{background:rgba(22,19,36,.97);color:#f1effb;border:1px solid rgba(255,255,255,.09);border-left:4px solid var(--vi);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.45);padding:11px 16px;font-size:14px}
+#upd{background:linear-gradient(90deg,#6d4dff,#8a6bff)}
+#land .card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 90px rgba(0,0,0,.45);padding:32px}#land h1{font-size:36px;background:linear-gradient(135deg,#b6a5ff,#7c5cff 55%,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0}
+@media(max-width:1180px){#app{grid-template-columns:272px minmax(0,1fr)}#memcol{display:none}#mt{display:inline-flex}body.mem #memcol{display:block;position:fixed;right:0;top:0;bottom:0;width:280px;z-index:20;box-shadow:-24px 0 60px rgba(0,0,0,.5)}body.mem #scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19}}
+@media(max-width:700px){#app{grid-template-columns:minmax(0,1fr)}header{height:54px;padding:0 10px}.row{padding:3px 12px}.row .av{width:38px;height:38px}footer{padding:0 12px calc(14px + env(safe-area-inset-bottom,0px))}.tb{min-height:34px}body.nav #side{width:min(310px,86vw)}}
+</style></head><body>
+<div id="land"><div class="card"><h1>Spian</h1><p>Private group chat that runs in your browser. No accounts, no installs.</p>
+<input id="nm" maxlength="24" placeholder="Your name">
+<button id="host">Make a server</button><p>You host it. Friends can chat while this page stays open.</p><hr>
+<input id="jc" maxlength="12" placeholder="Server code from a friend"><button class="ghost" id="join">Join a server</button><p id="lst" style="min-height:1.3em;font-size:13px"></p></div></div>
+<div id="app"><aside id="side"><div class="brand"><i id="bi">S</i><div class="bt"><span id="bn">Spian</span><small id="bs"></small></div><span id="tools"><button class="tb" id="vsb" title="Voice settings">🎙</button><button class="tb" id="rolesb" title="Roles &amp; members">🛡</button><button class="tb" id="leaveb" title="Leave server" style="display:none">🚪</button></span></div><div id="code" title="Click to copy"></div><button class="ghost" id="pubb" style="display:none"></button><div id="chans"></div>
+<div id="vpanel"><div class="vst"><i id="vdot"></i><b id="vtx">Voice</b></div><small id="vch"></small><div class="vbt"><button class="ghost" id="vmute">🎤 Mute</button><button class="ghost" id="vdeaf">🎧 Deafen</button><button class="danger" id="vdis">⏏ Disconnect</button></div></div>
+<div id="me"><div id="mine" title="Edit your profile"></div><button class="ic" id="th" title="Switch theme">◐</button></div></aside>
+<main><header><button class="ic" id="nav" title="Channels">☰</button><h1 id="tt"># general</h1><button class="ic" id="mt" title="Members">👥</button></header><section id="msgs"></section><div id="typing" style="height:20px;padding:0 24px;color:var(--mut);font-size:13px"></div>
+<footer><div id="eb">Editing message. Press Enter to save, Esc to cancel.</div><div id="cw"><textarea id="mi" rows="1" maxlength="2000" placeholder="Message"></textarea><button id="sb" aria-label="Send message">➤</button></div></footer></main><aside id="memcol"><div class="mh">Members</div><div id="mem"></div></aside></div>
+<div id="shell"><nav id="srail"></nav><div id="frames"><div id="empty"><h2>Welcome to Spian</h2><p>You are not in any servers yet.</p><button id="mk">Make a server!</button><p style="font-size:12px;margin-top:16px">Got a code from a friend? Use the + on the left.</p></div></div></div>
+<div id="upd">A new version of Spian is ready. It reloads by itself when you are idle. <button id="updb">Reload now</button></div>
+<div id="vload"><div class="vbox2"><div class="spin"></div><p id="vlm">Connecting to voice…</p><button class="ghost" id="vlc">Cancel</button></div></div><div id="audios" style="position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden"></div>
+<div id="scrim"></div>
+<dialog id="dlg"></dialog><div id="toast"></div>
+<script>
+const $=i=>document.getElementById(i),esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const md=s=>esc(s).replace(/```\n?([\s\S]*?)```/g,'<pre>$1</pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
+const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return`linear-gradient(135deg,hsl(${h} 62% 52%),hsl(${(h+40)%360} 62% 38%))`};
+const av=n=>`<div class="av" style="background:${hue(n)}">${esc(n[0]||'?').toUpperCase()}</div>`;
+const rand=n=>Array.from(crypto.getRandomValues(new Uint8Array(n||6)),b=>'abcdefghjkmnpqrstuvwxyz23456789'[b%31]).join('');
+const ls={get:k=>{try{return localStorage.getItem(k)}catch{}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}}};
+const ST={online:'Online',idle:'Idle',dnd:'Do Not Disturb',invisible:'Invisible'},SC={online:'#3ddc97',idle:'#f5b942',dnd:'#f0506e',invisible:'#8f8aa8'};
+const THEMES={violet:['#8b5cf6','#4c1d95'],ocean:['#38bdf8','#0c4a6e'],sunset:['#fb923c','#9f1239'],forest:['#34d399','#064e3b'],rose:['#fb7185','#881337'],mono:['#a1a1aa','#27272a']};
+const str=(v,n)=>typeof v==='string'?v.trim().slice(0,n):'';
+const ACCS=['👑','😇','🐱','😈','🎩','🌸','⭐','🔥','❄️','🎀','🍀','💎','🌙','⚡','🎧','🦋'];
+const cleanDc=d=>{d=d||{};const hx=/^#[0-9a-f]{6}$/i;return{style:['ring','glow','grad'].includes(d.style)?d.style:'ring',c1:hx.test(d.c1)?d.c1:'#8b5cf6',c2:hx.test(d.c2)?d.c2:'#38bdf8',w:[2,3,4,5,6].includes(+d.w)?+d.w:3,an:['none','spin','pulse'].includes(d.an)?d.an:'none',acc:ACCS.includes(d.acc)?d.acc:''}};
+const DECOS=['none','neon','aurora','gold','frost','flame','crown','halo','ears','horns','custom','image'],DN={custom:'Your design',image:'Your image',none:'None',neon:'Neon ring',aurora:'Aurora',gold:'Gold',frost:'Frost',flame:'Flame',crown:'Crown',halo:'Halo',ears:'Cat ears',horns:'Horns'};
+const clean=p=>{p=p||{};const hx=/^#[0-9a-f]{6}$/i,img=(v,max)=>typeof v==='string'&&v.length<max&&/^data:image\/(png|jpeg|webp);base64,[\w+\/=]+$/.test(v)?v:'';
+ const name=str(p.name,24)||'Guest';return{name,username:str(p.username,20).toLowerCase().replace(/[^a-z0-9_]/g,'')||(name.toLowerCase().replace(/[^a-z0-9_]/g,'')||'user'),
+ color:hx.test(p.color)?p.color:'#8b5cf6',banner:hx.test(p.banner)?p.banner:'#4c1d95',bio:str(p.bio,300),custom:str(p.custom,60),status:Object.keys(ST).includes(p.status)?p.status:'online',
+ avatar:img(p.avatar,30000),bannerImg:img(p.bannerImg,45000),theme:Object.keys(THEMES).includes(p.theme)?p.theme:'violet',bg:['plain','gradient','dots'].includes(p.bg)?p.bg:'plain',
+ deco:DECOS.includes(p.deco)?p.deco:'none',dc:cleanDc(p.dc),dimg:img(p.dimg,30000),created:Number.isFinite(p.created)&&p.created>1.5e12&&p.created<Date.now()+864e5?p.created:0}};
+const uniq=(u,p)=>{const b=p.username.slice(0,16);let n=p.username,i=1;while(Object.entries(profs).some(([k,x])=>k!==u&&x.username===n)||(n===ADMIN_NAME&&!(profs[u]&&profs[u].admin)))n=b+(++i);p.username=n;return p};
+const sf=v=>String(v).replace(/[^#\w.-]/g,'');
+const dcl=p=>{if(!p.deco||!/^[a-z]+$/.test(p.deco)||p.deco==='none')return'';let s=' dc-'+p.deco;if(p.deco==='custom'&&p.dc)s+=' dcs-'+sf(p.dc.style)+' dca-'+sf(p.dc.an)+(p.dc.acc?' hasacc':'');return s};
+const dsty=p=>{if(p.deco==='custom'&&p.dc){const d=p.dc;return'--c1:'+sf(d.c1)+';--c2:'+sf(d.c2)+';--w:'+(+d.w||3)+'px;'+(ACCS.includes(d.acc)?'--acc:url(data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="82" font-size="80" text-anchor="middle">'+d.acc+'</text></svg>')+');':'')}
+ if(p.deco==='image'&&/^data:image\/(png|jpeg|webp);base64,[\w+\/=]+$/.test(p.dimg||''))return'--dimg:url('+p.dimg+');';return''};
+const avp=(p,cls)=>p.avatar?`<div class="av img ${cls||''}${dcl(p)}" style='background-image:url("${p.avatar}");${dsty(p)}'></div>`:`<div class="av ${cls||''}${dcl(p)}" style="background:${p.color||hue(p.name||'?')};${dsty(p)}">${esc((p.name||'?')[0]).toUpperCase()}</div>`;
+function shrinkPng(f,cb){const im=new Image();im.onload=()=>{for(const s of [128,96,64]){const c=document.createElement('canvas');c.width=c.height=s;const k=Math.min(s/im.width,s/im.height),w=im.width*k,hh=im.height*k;c.getContext('2d').drawImage(im,(s-w)/2,(s-hh)/2,w,hh);const u=c.toDataURL('image/png');if(u.length<30000)return cb(u)}toast('That image is too detailed. Use a simpler PNG.')};im.onerror=()=>toast('That file is not a usable image.');im.src=URL.createObjectURL(f)}
+const loadP=n=>{let p={};try{p=JSON.parse(ls.get('spian:profile'))||{}}catch{}p.name=n;p=clean(p);if(!p.created)p.created=Date.now();ls.set('spian:profile',JSON.stringify(p));return p};
+const ADMIN_NAME='soly',ADMIN_PUB={"kty": "EC", "crv": "P-256", "x": "g9CbY0Odgg-c0gKebNul-ML7S1MUMatlPvpFUhw3ePU", "y": "mGHfiohtXMrxv6hcyQFHgANMn2dkJj5Johe_A6rUmtI"};
+const ADMIN_BLOB={"s": "O4MlavzA7est51DH9nbkhg==", "i": "+72ilFYa/rck//h4", "c": "fbUQnceR70cThNjTyL9qcx7y1M5jBkcZwH5GhTg6QkgqZoyiAu2EAtCqc80zUQBV9rfcpEnmocbakEqXhXX6nmTjLXUNORHs4WyNC+1Z28KTqirBWIdTg1vjMQqwuiNgha2KbhrLAD/Nn248y+aYLRzLwkbIURXzcrXriXkqzHzlKLEjdafo/eWBmAQ1kANM4GvLGU5Dr4bwkbOdc2OdtSubrqGyr8MN/a5lTLl73KspB4JI7/Odw+XDDm1N9Dw5rXn/xdHR9XyU", "n": 1500000};
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u))),unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)),EC={name:'ECDSA',namedCurve:'P-256'},SG={name:'ECDSA',hash:'SHA-256'};
+async function adminSign(msg){const k=ls.get('spian:adminkey');if(!k||!crypto.subtle)return null;try{const key=await crypto.subtle.importKey('jwk',JSON.parse(k),EC,false,['sign']);return b64(await crypto.subtle.sign(SG,key,new TextEncoder().encode(msg)))}catch{return null}}
+async function pinUnlock(code){try{const b=ADMIN_BLOB,km=await crypto.subtle.importKey('raw',new TextEncoder().encode(code),'PBKDF2',false,['deriveKey']),
+  k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(b.s),iterations:b.n,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']),
+  pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(b.i)},k,unb64(b.c)),j=JSON.parse(new TextDecoder().decode(pt));
+  return(j.d&&j.x===ADMIN_PUB.x&&j.y===ADMIN_PUB.y)?JSON.stringify(j):null}catch{return null}}
+async function adminVerify(msg,sig){try{const key=await crypto.subtle.importKey('jwk',ADMIN_PUB,EC,false,['verify']);return await crypto.subtle.verify(SG,key,unb64(sig),new TextEncoder().encode(msg))}catch{return false}}
+const PROTO=6;
+const STUN=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}];
+// Shared free public relay (best effort, may be slow or limited). The server owner can add their own in Voice settings.
+const FREE_TURN={urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'};
+const VP=['connect','speak'],PCFG={config:{iceServers:[...STUN,FREE_TURN]}};
+const PK=['delete','channels','kick','ban',...VP],PL={connect:'Connect to voice',speak:'Speak in voice',delete:'Delete messages',channels:'Manage channels',kick:'Kick members',ban:'Ban members',roles:'Manage roles'};
+const DEFROLES=()=>[{id:'admin',name:'Admin',color:'#f0506e',perms:{delete:1,channels:1,kick:1,ban:1}},{id:'mod',name:'Moderator',color:'#38bdf8',perms:{delete:1,kick:1}},{id:'member',name:'Member',color:'#8f8aa8',perms:{}}];
+const myKey=()=>{let k=ls.get('spian:key');if(!k||k.length<16){k=rand(16);ls.set('spian:key',k)}return k};
+const roleU=k=>(st.assign&&st.assign[k])||'member';
+const rankU=k=>k===st.owner?-1:(i=>i<0?st.roles.length:i)(st.roles.findIndex(r=>r.id===roleU(k)));
+const permU=(k,p)=>{const r=st.roles.find(x=>x.id===roleU(k))||{perms:{}};return k===st.owner||(VP.includes(p)?r.perms[p]!==0:!!r.perms[p])};
+const uidOf=u=>u===me.id&&isHost?myKey():(profs[u]&&profs[u].uid);
+const isAdm=u=>!!(profs[u]&&profs[u].admin),isHostU=u=>u===me.id&&isHost;
+const perm=(u,p)=>isAdm(u)||isHostU(u)||permU(uidOf(u),p),rank=u=>isAdm(u)?-2:isHostU(u)?-1:rankU(uidOf(u)),isOwner=u=>isAdm(u)||isHostU(u)||uidOf(u)===st.owner;
+let selfR={owner:false,admin:false,rid:'member',bans:[]},rolesPanel=null;
+const selfFor=u=>{const k=uidOf(u);return{owner:k===st.owner||isAdm(u)||isHostU(u),admin:isAdm(u),rid:roleU(k),bans:perm(u,'ban')?(st.bans||[]).map(b=>({id:b.id,name:b.name})):[]}};
+const myPerm=p=>{if(selfR.owner)return true;const r=(st.roles||[]).find(x=>x.id===selfR.rid)||{perms:{}};return VP.includes(p)?r.perms[p]!==0:!!r.perms[p]};
+const myRank=()=>selfR.owner?-1:(i=>i<0?(st.roles||[]).length:i)((st.roles||[]).findIndex(r=>r.id===selfR.rid));
+const selfRole=()=>{if(selfR.owner)return{rname:'Owner',rcolor:'#f5b942'};const r=(st.roles||[]).find(x=>x.id===selfR.rid)||{name:'Member',color:'#8f8aa8'};return{rname:r.name,rcolor:r.color}};
+let P=clean({}),profs={};
+let peer,conns={},isHost=false,code='',me={id:null,name:''},hostName='',st={channels:[],messages:[]},members=[],cur='general',editing=null,hc=null,unread=new Set(),tm,tt;
+const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(tm);tm=setTimeout(()=>t.style.display='none',5000)};
+if(ls.get('spian:theme'))document.documentElement.dataset.theme=ls.get('spian:theme');
+$('th').onclick=()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;ls.set('spian:theme',t)};
+$('nav').onclick=()=>document.body.classList.toggle('nav');
+function modal(html,bind,cls){const d=$('dlg');d.className=cls||'';d.innerHTML=html;d.onclick=e=>{if(e.target===d)d.close()};bind(d);d.showModal()}
+const sure=(msg,fn)=>modal(`<h2>Are you sure?</h2><p>${esc(msg)}</p><div class="btns"><button class="ghost" id="c">Cancel</button><button class="danger" id="o">Confirm</button></div>`,d=>{d.querySelector('#c').onclick=()=>d.close();d.querySelector('#o').onclick=()=>{d.close();fn()}});
+$('nm').value=ls.get('spian:name')||'';
+const getName=()=>{const n=$('nm').value.trim().slice(0,24);if(n.length<2){setS('Enter a name of at least 2 characters.',true);return null}ls.set('spian:name',n);return n};
+function loadLib(urls,done){const u=urls.shift();if(!u)return done(false);const s=document.createElement('script');s.src=u;s.onload=()=>done(true);s.onerror=()=>{s.remove();loadLib(urls,done)};document.head.append(s)}
+let libReady=typeof Peer!=='undefined';
+if(!libReady)loadLib(['https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js'],ok=>{libReady=ok;if(!ok)setS('Could not load the connection library. Check your internet connection and reload.',true)});
+// ---------- host ----------
+const setS=(m,bad)=>{const e=$('lst');e.textContent=m||'';e.style.color=bad?'var(--red)':'var(--mut)'};
+const busy=b=>{$('host').disabled=$('join').disabled=b};
+const netErr=['network','server-error','socket-error','socket-closed','browser-incompatible'];
+const NETMSG='Could not reach the connection service. Check your internet, or try another network such as a phone hotspot. If you are viewing this inside a preview window, download the file and open it directly in Edge or Chrome instead.';
+function fail(m){setS(m,true);busy(false);try{peer&&peer.destroy()}catch{}peer=null}
+function hostRoom(n,tries){
+ me.name=n;P=loadP(n);if(forced&&tries>=8)return fail('This server code is still registered. Wait a minute, then reload this page.');code=forced||(tries>=3?rand(6):(ls.get('spian:hosted')||rand(6)));
+ try{st=JSON.parse(ls.get('spian:room:'+code))}catch{st=null}if(!st||!st.channels)st={channels:[{id:'general',name:'general'},{id:'voice',name:'Voice',type:'voice'}],messages:[]};
+ if(forcedName)st.name=forcedName;if(code==='global'&&!st.channels.some(c=>c.type==='voice'))st.channels.push({id:'voice',name:'Voice',type:'voice'});if(!st.roles)st.roles=DEFROLES();if(!st.assign)st.assign={};if(!st.owner)st.owner=myKey();if(!st.bans)st.bans=[];st.ver=PROTO;
+ setS('Starting your server…');busy(true);const p=new Peer('spian-'+code,PCFG);peer=p;p.on('call',onCall);
+ const to=setTimeout(()=>fail(NETMSG),10000);
+ p.on('open',id=>{clearTimeout(to);me.id=id;isHost=true;profs[id]=clean(P);profs[id].uid=myKey();if(profs[id].username===ADMIN_NAME)profs[id].username='soly2';
+  {const n=rand(16),msg='spian-admin|'+n+'|'+code;adminSign(msg).then(s=>s&&adminVerify(msg,s)).then(ok=>{if(ok){profs[id].admin=true;profs[id].username=ADMIN_NAME;pushMembers()}})}ls.set('spian:hosted',code);enter()});
+ p.on('connection',c=>{c.on('data',d=>hostRecv(c,d));c.on('close',()=>{delete conns[c.peer];delete profs[c.peer];vdrop(c.peer);pushMembers()})});
+ p.on('error',e=>{clearTimeout(to);if(isHost){toast('Connection problem: '+e.type);return}
+  if(e.type==='unavailable-id'){try{p.destroy()}catch{}if(forced){hostTry=tries;setS('This server is already open in another tab. Connecting to it…');$('jc').value=forced;$('join').onclick();return}setS('Your server is still registered from a moment ago. Retrying…');setTimeout(()=>hostRoom(n,tries+1),3000);return}
+  fail(netErr.includes(e.type)?NETMSG:'Connection problem: '+e.type)})}
+$('host').onclick=()=>{const n=getName();if(!n)return;if(!libReady)return setS('Still loading the connection library. Wait a few seconds, or check your internet and reload.',true);hostRoom(n,0)};
+const save=()=>ls.set('spian:room:'+code,JSON.stringify({name:st.name,turn:st.turn,roles:st.roles,assign:st.assign,owner:st.owner,bans:st.bans,channels:st.channels,messages:st.messages.slice(-1000)}));
+const bcast=o=>{Object.values(conns).forEach(x=>x.c.open&&x.c.send(o));recv(o)};
+const nameOf=u=>(profs[u]&&profs[u].name)||'Someone';
+const memberList=()=>[me.id,...Object.keys(conns)].map(id=>{const k=uidOf(id),own=k===st.owner||isAdm(id)||isHostU(id),r=st.roles.find(x=>x.id===roleU(k)),o={...profs[id],id,host:id===me.id,owner:own,admin:isAdm(id),rid:roleU(k),rname:own?'Owner':(r?r.name:'Member'),rcolor:own?'#f5b942':(r?r.color:'#8f8aa8')};delete o.uid;return o}).filter(m=>m.status!=='invisible');
+function pushMembers(){Object.entries(conns).forEach(([id,x])=>x.c.open&&x.c.send({t:'self',...selfFor(id)}));selfR=selfFor(me.id);bcast({t:'members',members:memberList()})}
+function hostRecv(c,m){if(!m||typeof m!=='object')return;if(m.t==='ping'){c.send({t:'pong'});return}
+ if(m.t==='proof'){const x=conns[c.peer];if(x&&x.nonce&&typeof m.sig==='string'&&m.sig.length<200){const n=x.nonce;delete x.nonce;adminVerify('spian-admin|'+n+'|'+code,m.sig).then(ok=>{if(ok&&conns[c.peer]&&profs[c.peer]){profs[c.peer].admin=true;profs[c.peer].username=ADMIN_NAME;pushMembers()}})}return}
+ if(m.t==='hello'){const kk=/^[a-z0-9]{10,24}$/.test(m.key)?m.key:c.peer;if((st.bans||[]).some(b=>b.key===kk)){c.send({t:'banned'});setTimeout(()=>{try{c.close()}catch{}},200);return}
+  conns[c.peer]={c};const want=clean(m.p||{name:m.name});profs[c.peer]=uniq(c.peer,{...want});const got=profs[c.peer].username;profs[c.peer].uid=/^[a-z0-9]{10,24}$/.test(m.key)?m.key:c.peer;c.send({t:'state',st:{name:st.name,ver:st.ver,turn:st.turn,roles:st.roles,assign:st.assign,channels:st.channels,messages:st.messages.slice(-500)},members:memberList(),voice:vroom});if(got!==want.username)c.send({t:'notice',msg:'The username @'+want.username+' is already taken in this server, so you are @'+got+' here.'});const nonce=rand(16);conns[c.peer].nonce=nonce;c.send({t:'chal',n:nonce});pushMembers();return}
+ if(conns[c.peer])apply(c.peer,m)}
+const vto=(u,o)=>u===me.id?recv(o):(conns[u]&&conns[u].c.open&&conns[u].c.send(o));
+const vremove=u=>{for(const c in vroom)delete vroom[c][u]},vpush=()=>bcast({t:'voice',v:vroom}),vdrop=u=>{vremove(u);vpush()};
+function vrecheck(){let ch=false;for(const cid in vroom)for(const id in vroom[cid]){const x=vroom[cid][id];if(!perm(id,'connect')){delete vroom[cid][id];vto(id,{t:'vkick',msg:'Your role no longer allows you to join voice.'});ch=true}else{const sp=perm(id,'speak');if(!sp&&!x.srv){x.srv=true;x.m=true;x.s=false;ch=true}else if(sp&&x.srv){x.srv=false;ch=true}}}if(ch)vpush()}
+function rolesSaved(){vrecheck();save();bcast({t:'roles',roles:st.roles,assign:st.assign});pushMembers()}
+function apply(u,m){const own=u===me.id;switch(m.t){
+ case'roleset':{if(!isOwner(u))return;const R=m.role||{},nm=str(R.name,24);if(!nm)return;const hx=/^#[0-9a-f]{6}$/i,my=rank(u),ex=st.roles.find(r=>r.id===R.id),pr={};
+  PK.forEach(k=>{pr[k]=VP.includes(k)?(R.perms&&R.perms[k]?1:0):perm(u,k)?(R.perms&&R.perms[k]?1:0):(ex&&ex.perms[k]?1:0)});
+  if(ex){if(st.roles.indexOf(ex)<=my&&!isOwner(u))return;if(ex.id!=='member')ex.name=nm;ex.color=hx.test(R.color)?R.color:ex.color;ex.perms=pr}
+  else{if(st.roles.length>=20)return;st.roles.splice(Math.min(my+1,st.roles.length-1),0,{id:rand(5),name:nm,color:hx.test(R.color)?R.color:'#8b5cf6',perms:pr})}
+  rolesSaved();break}
+ case'roledel':{const i=st.roles.findIndex(r=>r.id===m.id);if(!isOwner(u)||i<0||m.id==='member'||(i<=rank(u)&&!isOwner(u)))return;st.roles.splice(i,1);Object.keys(st.assign).forEach(k=>{if(st.assign[k]===m.id)delete st.assign[k]});rolesSaved();break}
+ case'rolemove':{const i=st.roles.findIndex(r=>r.id===m.id),j=i+(m.d<0?-1:1),my=rank(u);if(!isOwner(u)||i<0||m.id==='member'||j<0||j>=st.roles.length-1||(!isOwner(u)&&(i<=my||j<=my)))return;[st.roles[i],st.roles[j]]=[st.roles[j],st.roles[i]];rolesSaved();break}
+ case'assign':{const t=m.pid,k=uidOf(t),r=st.roles.findIndex(x=>x.id===m.role),my=rank(u);if(!isOwner(u)||!k||k===st.owner||isAdm(t)||r<0||(!isOwner(u)&&(r<=my||rankU(k)<=my)))return;if(m.role==='member')delete st.assign[k];else st.assign[k]=m.role;rolesSaved();break}
+ case'kick':case'ban':{const t=m.pid,ban=m.t==='ban';if(!perm(u,ban?'ban':'kick')||!conns[t]||t===u||isAdm(t)||(!isAdm(u)&&(isOwner(t)||(!isOwner(u)&&rank(t)<=rank(u)))))return;
+  if(ban){if(!st.bans)st.bans=[];st.bans.push({id:rand(5),key:profs[t].uid,name:profs[t].name});save()}
+  conns[t].c.send({t:ban?'banned':'kicked'});setTimeout(()=>{try{conns[t].c.close()}catch{}},200);if(ban)setTimeout(pushMembers,300);break}
+ case'unban':{if(!perm(u,'ban'))return;st.bans=(st.bans||[]).filter(b=>b.id!==m.id);rolesSaved();break}
+ case'profile':{const np=clean(m.p),old=profs[u],want=np.username;
+  if(Object.entries(profs).some(([k,x])=>k!==u&&x.username===want)||(want===ADMIN_NAME&&!(old&&old.admin))){np.username=old?old.username:uniq(u,{...np}).username;
+   const msg='The username @'+want+' is already taken in this server, so your username stayed @'+np.username+'.';if(own)toast(msg);else if(conns[u])conns[u].c.send({t:'notice',msg})}
+  np.uid=(old&&old.uid)||uidOf(u);np.admin=!!(old&&old.admin);profs[u]=np;if(own){me.name=np.name}pushMembers();break}
+ case'msg':{const text=str(m.text,2000);if(!text||!st.channels.some(c=>c.id===m.cid))return;const x={id:rand(8),cid:m.cid,uid:u,name:nameOf(u),text,ts:Date.now()};st.messages.push(x);save();bcast({t:'msg',m:x});break}
+ case'edit':{const x=st.messages.find(y=>y.id===m.id),text=str(m.text,2000);if(!x||x.uid!==u||!text)return;x.text=text;x.edited=true;save();bcast({t:'edit',id:x.id,text});break}
+ case'del':{const x=st.messages.find(y=>y.id===m.id);if(!x||(x.uid!==u&&!perm(u,'delete')))return;st.messages=st.messages.filter(y=>y!==x);save();bcast({t:'del',id:x.id});break}
+ case'newchan':{const n=str(m.name,32).toLowerCase().replace(/\s+/g,'-');if(!perm(u,'channels')||!n)return;const c={id:rand(6),name:n,type:m.type==='voice'?'voice':'text'};st.channels.push(c);save();bcast({t:'chans',channels:st.channels,go:c.type==='text'?c.id:undefined});break}
+ case'setturn':{if(!perm(u,'channels'))return;const T=m.turn;if(!T){delete st.turn}else{const urls=(Array.isArray(T.urls)?T.urls:[]).map(x=>str(x,200)).filter(x=>/^(turns?|stuns?):/.test(x)).slice(0,4);if(!urls.length)return;st.turn={urls,username:str(T.username,200),credential:str(T.credential,200)}}save();bcast({t:'turn',turn:st.turn||null});break}
+ case'renchan':{const n=str(m.name,32),ch=st.channels.find(c=>c.id===m.id);if(!perm(u,'channels')||!n||!ch)return;ch.name=ch.type==='voice'?n:n.toLowerCase().replace(/\s+/g,'-');save();bcast({t:'chans',channels:st.channels});break}
+ case'vjoin':{const ch=st.channels.find(c=>c.id===m.cid);if(!ch||ch.type!=='voice')return;
+  if(!perm(u,'connect'))return vto(u,{t:'verr',msg:'You do not have permission to join voice channels here.'});
+  vremove(u);const room=vroom[m.cid]||(vroom[m.cid]={});if(Object.keys(room).length>=10)return vto(u,{t:'verr',msg:'This voice channel is full (10 people).'});
+  const peers=Object.keys(room),sp=perm(u,'speak');room[u]={m:!sp,d:false,s:false,srv:!sp,n:nameOf(u)};vto(u,{t:'vpeers',cid:m.cid,peers});vpush();break}
+ case'vleave':vremove(u);vpush();break
+ case'vstate':{for(const cid in vroom){const x=vroom[cid][u];if(x){x.d=!!m.d;x.m=x.srv?true:!!m.m;if(x.m)x.s=false}}vpush();break}
+ case'vspeak':{for(const cid in vroom){const x=vroom[cid][u];if(x){x.s=!!m.s&&!x.m;bcast({t:'vspk',cid,id:u,s:x.s})}}break}
+ case'delchan':{if(!perm(u,'channels')||m.id==='general')return;st.channels=st.channels.filter(c=>c.id!==m.id);st.messages=st.messages.filter(x=>x.cid!==m.id);delete vroom[m.id];save();bcast({t:'chans',channels:st.channels,gone:m.id});vpush();break}
+ case'typing':Object.entries(conns).forEach(([id,x])=>id!==u&&x.c.open&&x.c.send({t:'typing',cid:m.cid,name:nameOf(u)}));if(!own)recv({t:'typing',cid:m.cid,name:nameOf(u)});break}}
+// ---------- guest ----------
+let vroom={},hb=null,lastRx=Date.now(),hostTry=0,kicked=false,jt,forced='',forcedName='',pubOn=false;const IN=window.parent!==window&&/(^|[#&])mode=(host|join|auto)/.test(location.hash);
+$('join').onclick=()=>{const n=getName(),c=$('jc').value.trim().toLowerCase().replace(/^spian-/,'');if(!n)return;
+ if(!libReady)return setS('Still loading the connection library. Wait a few seconds, or check your internet and reload.',true);
+ if(!c)return setS('Enter the server code your friend gave you.',true);
+ me.name=n;P=loadP(n);code=c;setS('Connecting…');busy(true);const p=new Peer(undefined,PCFG);peer=p;p.on('call',onCall);
+ jt=setTimeout(()=>fail('Could not connect to the server. Make sure the host has the page open and the code is right.'),12000);
+ p.on('open',id=>{me.id=id;link()});
+ p.on('error',e=>{clearTimeout(jt);if(entered){toast('Connection problem: '+e.type);return}
+  if(e.type==='peer-unavailable'&&forced&&hostTry<8){try{p.destroy()}catch{}setS('Starting the server…');setTimeout(()=>hostRoom(me.name,hostTry+1),hostTry===0?(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches&&forced==='global'?12000:400):3000);return}
+  fail(e.type==='peer-unavailable'?'Server not found. Check the code and make sure the host has the page open.':netErr.includes(e.type)?NETMSG:'Connection problem: '+e.type)})};
+$('nm').onkeydown=$('jc').onkeydown=e=>{if(e.key==='Enter')(e.target.id==='jc'&&$('jc').value.trim()?$('join'):$('host')).click()};
+let entered=false;
+function link(){if(!hb)hb=setInterval(()=>{if(hc&&hc.open&&entered){hc.send({t:'ping'});if(Date.now()-lastRx>30000){try{hc.close()}catch{}}}},10000);
+ hc=peer.connect('spian-'+code,{reliable:true});hc.on('open',()=>hc.send({t:'hello',name:me.name,p:P,key:myKey()}));hc.on('data',d=>{lastRx=Date.now();if(d&&d.t==='state'){st=d.st;if(!st.roles)st.roles=DEFROLES();if(!st.assign)st.assign={};members=d.members;vroom=d.voice||{}}recv(d)});
+ hc.on('close',()=>{if(VS.cid)vCleanup();if(entered&&!kicked){toast('Disconnected from the server. Reconnecting…');if(forced)setTimeout(()=>location.reload(),4000);else setTimeout(link,3000)}})}
+// ---------- shared UI ----------
+const send=m=>{if(isHost)apply(me.id,m);else if(hc&&hc.open)hc.send(m);else toast('Not connected to the room.')};
+function report(){if(IN)parent.postMessage({spian:1,code,name:st.name||'',members:members.length},'*')}
+function enter(){clearTimeout(jt);{const bi=$('bi');bi.textContent=((st.name||'Spian')[0]||'S').toUpperCase();bi.style.background=hue(st.name||'Spian')}$('rolesb').onclick=rolesDlg;if(IN){$('leaveb').style.display='block';$('leaveb').onclick=()=>parent.postMessage({spian:1,code,leave:1},'*')}$('vsb').onclick=voiceDlg;if(isHost)selfR=selfFor(me.id);$('bn').textContent=st.name||'Spian';setTimeout(report,0);
+ if(IN&&isHost&&code!=='global'){const b=$('pubb');b.style.display='block';const lab=()=>b.textContent='Public in Discover: '+(pubOn?'On':'Off');lab();b.onclick=()=>{pubOn=!pubOn;lab();parent.postMessage({spian:1,code,pub:pubOn},'*')}}
+$('land').style.display='none';$('app').style.display='grid';entered=true;$('code').textContent='Server code: '+code+' (click to copy)';$('code').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(code);toast('Server code copied')};
+ renderMe();if(isHost)members=memberList();pick('general')}
+let cT=null;function cacheSave(){clearTimeout(cT);cT=setTimeout(()=>ls.set('spian:room:'+code,JSON.stringify({name:st.name,channels:st.channels,messages:st.messages.slice(-300)})),800)}
+function recv(o){if(!o||o.t==='pong')return;
+ if(o.t==='chal'){adminSign('spian-admin|'+o.n+'|'+code).then(s=>{if(s&&hc&&hc.open)hc.send({t:'proof',sig:s})});return}
+ if(o.t==='turn'){if(!isHost){if(o.turn)st.turn=o.turn;else delete st.turn}return}
+ if(o.t==='verr'){vErr(o.msg);return}
+ if(o.t==='vpeers'){vPeers(o);return}
+ if(o.t==='vkick'){const m=o.msg;vCleanup();hideLoad();toast(m||'You were disconnected from voice.');return}
+ if(o.t==='voice'){if(!isHost)vroom=o.v||{};vsync();updateVoice();if(entered)renderChans();return}
+ if(o.t==='vspk'){if(!isHost){const x=vroom[o.cid]&&vroom[o.cid][o.id];if(x)x.s=o.s}updateVoice();return}
+ if(o.t==='banned'){kicked=true;toast('You are banned from this server.');try{hc.close()}catch{}return}if(!isHost&&forced&&['state','msg','edit','del'].includes(o.t))cacheSave();if(o.t==='kicked'){kicked=true;toast('You were removed from this server by a moderator.');try{hc.close()}catch{}return}
+ if(!isHost&&o.t==='self')selfR={owner:!!o.owner,admin:!!o.admin,rid:String(o.rid||'member'),bans:Array.isArray(o.bans)?o.bans:[]};
+ if(!isHost&&o.t==='roles'){st.roles=o.roles;st.assign=o.assign}
+ if(rolesPanel&&(o.t==='roles'||o.t==='members'||o.t==='self'))setTimeout(()=>rolesPanel&&rolesPanel(),0);if(o.t==='notice'){toast(o.msg);return}
+ if(!isHost)switch(o.t){case'msg':st.messages.push(o.m);break;case'edit':{const x=st.messages.find(y=>y.id===o.id);if(x){x.text=o.text;x.edited=true}break}case'del':st.messages=st.messages.filter(y=>y.id!==o.id);break;case'chans':st.channels=o.channels;break;case'members':members=o.members;break}
+ if(o.t==='members'&&isHost)members=o.members;
+ if(o.t==='state'&&!entered)enter();
+ if(o.t==='chans'&&entered){if(o.gone===cur){pick('general');return}if(o.go&&isHost){pick(o.go);return}}
+ if(o.t==='msg'&&o.m.cid!==cur&&o.m.uid!==me.id)unread.add(o.m.cid);
+ if(IN&&o.t==='msg'&&o.m.uid!==me.id)parent.postMessage({spian:1,code,ping:1},'*');
+ if(o.t==='typing'){if(o.cid===cur){$('typing').textContent=o.name+' is typing…';clearTimeout(tt);tt=setTimeout(()=>$('typing').textContent='',2500)}return}
+ if(entered){if(o.t==='members')report();renderMe();renderChans();renderMem();renderMsgs(o.t==='msg'&&o.m.uid===me.id)}}
+const prof=(u,n)=>members.find(x=>x.id===u)||{name:n};
+function renderMe(){$('mine').innerHTML=avp(P)+'<div style="min-width:0"><b>'+esc(P.name)+'</b><small style="display:block;color:var(--mut);font-size:11px"><i class="sd" style="background:'+SC[P.status]+'"></i>'+esc(P.custom||ST[P.status])+'</small></div>';$('mine').onclick=()=>card(me.id,P.name)}
+function renderMem(){const m=$('mem');$('bs').textContent=members.length+(members.length===1?' person online':' people online');m.innerHTML='<div class="mem" style="font-weight:700">Online — '+members.length+'</div>';
+ members.forEach(x=>{const d=document.createElement('div');d.className='mem';d.style.cursor='pointer';d.innerHTML=avp(x)+'<span style="min-width:0"><span style="color:'+(x.rcolor||'var(--tx)')+'">'+esc(x.name)+(x.host?' (host)':'')+'</span><small style="display:block;font-size:11px"><i class="sd" style="background:'+SC[x.status||'online']+'"></i>'+esc(x.custom||ST[x.status||'online'])+'</small></span>';d.onclick=()=>card(x.id,x.name);m.append(d)})}
+function card(u,fb){const on=u===me.id?{...P,id:me.id,host:isHost,...selfRole()}:members.find(x=>x.id===u),p=on||{name:fb},s=on?(p.status||'online'):'invisible',T=THEMES[p.theme]||THEMES.violet;
+ const bg=p.bg==='gradient'?`linear-gradient(165deg,${T[1]} 0%,var(--panel) 60%)`:p.bg==='dots'?`radial-gradient(${T[0]}40 1.5px,transparent 1.5px) 0 0/16px 16px,var(--panel)`:'var(--panel)';
+ const ban=p.bannerImg?`background:url("${p.bannerImg}") center/cover`:`background:linear-gradient(120deg,${p.banner||T[1]},${T[0]})`;
+ const days=p.created?Math.floor((Date.now()-p.created)/864e5):-1,since=p.created?new Date(p.created).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}):'Unknown';
+ const roles=on?['<span class="chip fill" style="background:'+(on.rcolor||'var(--ac)')+'">'+esc(on.rname||'Member')+'</span>']:[];
+ const badges=[];if(on&&on.host)badges.push('👑 Room host');if(days>=0&&days<7)badges.push('🌱 Newcomer');if(days>=30)badges.push('🏅 Veteran');if(p.avatar&&p.bannerImg&&p.bio)badges.push('🎨 Personalised');
+ modal(`<div class="pg" style="--ac:${T[0]};background:${bg}"><div class="bn" style='${ban}'></div><div class="ava">${avp(p)}<i class="sd" style="background:${SC[s]}"></i></div>
+<div class="in"><h2>${esc(p.name||fb)}</h2><div class="un">${on?'@'+esc(p.username||''):''}</div><div style="margin-top:6px"><i class="sd" style="background:${SC[s]}"></i>${esc(on?(p.custom||ST[s]):'Offline')}</div>
+${on?'':'<h4>Offline</h4><p>Profile details are only shown while someone is online in this server.</p>'}
+${p.bio?'<h4>About me</h4><p>'+esc(p.bio)+'</p>':''}${on?'<h4>Member since</h4><p>'+since+'</p><h4>Roles in this server</h4>'+roles.join(''):''}
+${badges.length?'<h4>Badges</h4>'+badges.map(b=>'<span class="chip">'+b+'</span>').join(''):''}
+<div class="btns" style="margin-top:18px">${u===me.id?'<button id="e">Edit profile</button>':''}<button class="ghost" id="c">Close</button></div></div></div>`,d=>{d.querySelector('#c').onclick=()=>d.close();const e=d.querySelector('#e');if(e)e.onclick=()=>{d.close();editProfile()}},'wide scroll')}
+function shrink(f,w,hh,q,cb){const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=w;c.height=hh;const k=Math.max(w/im.width,hh/im.height),sw=w/k,sh=hh/k;c.getContext('2d').drawImage(im,(im.width-sw)/2,(im.height-sh)/2,sw,sh,0,0,w,hh);cb(c.toDataURL('image/jpeg',q))};im.onerror=()=>toast('That file is not a usable image.');im.src=URL.createObjectURL(f)}
+function editProfile(){let pic=P.avatar,ban=P.bannerImg,tgt='a',deco=P.deco||'none',dc={...(P.dc||cleanDc({}))},dimg=P.dimg||'';
+ const sel=(id,o,c)=>`<select id="${id}" class="sl">${o.map(([k,l])=>`<option value="${k}"${c===k?' selected':''}>${l}</option>`).join('')}</select>`;
+ modal(`<div style="padding:22px"><h2>Edit profile</h2><div class="g">
+<label>Display name<input id="pn" maxlength="24" value="${esc(P.name)}"></label><label>Username<input id="pu" maxlength="20" value="${esc(P.username)}"></label><small style="color:var(--mut);margin-top:-6px">Usernames are unique in each server. If yours is taken, you will be told.</small>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ghost" id="au">Avatar picture</button><button class="ghost" id="ar">Remove</button><button class="ghost" id="bu">Banner picture</button><button class="ghost" id="br">Remove</button></div><input id="pf" type="file" accept="image/*" hidden>
+<label>Avatar colour<input id="pc" type="color" value="${P.color}"></label><label>Banner colour<input id="pb" type="color" value="${P.banner}"></label>
+<div><div style="color:var(--mut);font-size:13px">Avatar decoration</div><div id="dgrid" style="display:flex;flex-wrap:wrap;gap:16px;padding:16px 8px 8px"></div><div id="dcp" style="padding:0 8px 8px"></div></div>
+<label>Profile theme${sel('pth',Object.keys(THEMES).map(k=>[k,k[0].toUpperCase()+k.slice(1)]),P.theme)}</label><label>Background${sel('pbg',[['plain','Plain'],['gradient','Gradient'],['dots','Dots']],P.bg)}</label>
+<label>Status${sel('ps',Object.keys(ST).map(k=>[k,ST[k]]),P.status)}</label>
+<input id="pt" maxlength="60" value="${esc(P.custom)}" placeholder="Custom status, e.g. Studying"><textarea id="pi" rows="4" maxlength="300" placeholder="About me">${esc(P.bio)}</textarea></div>
+<div class="btns"><button class="ghost" id="c">Cancel</button><button id="o">Save</button></div></div>`,d=>{
+  const q=s=>d.querySelector(s);q('#c').onclick=()=>d.close();
+  {const g=q('#dgrid'),pan=q('#dcp');
+   const prev=k=>avp({...P,name:q('#pn').value||P.name,color:q('#pc').value||P.color,avatar:pic,deco:k,dc,dimg});
+   const grid=()=>{g.innerHTML='';DECOS.forEach(k=>{const t=document.createElement('div');t.style.cssText='text-align:center;cursor:pointer;width:62px;padding:6px 2px;border-radius:12px;'+(k===deco?'background:var(--raise);box-shadow:inset 0 0 0 2px var(--vi)':'');
+     t.innerHTML='<div style="display:flex;justify-content:center;padding-top:12px">'+prev(k)+'</div><small style="color:var(--mut);font-size:11px;display:block;margin-top:6px">'+DN[k]+'</small>';t.onclick=()=>{deco=k;grid();panel()};g.append(t)})};
+   const opt=(id,arr,cur)=>`<select id="${id}" class="sl">${arr.map(([v,l])=>`<option value="${v}"${String(cur)===String(v)?' selected':''}>${l}</option>`).join('')}</select>`;
+   const panel=()=>{if(deco==='custom'){pan.innerHTML=`<div class="g"><label>Style${opt('d_s',[['ring','Solid ring'],['glow','Glow'],['grad','Gradient ring']],dc.style)}</label><label>Colour 1<input type="color" id="d_1" value="${dc.c1}"></label><label>Colour 2<input type="color" id="d_2" value="${dc.c2}"></label><label>Thickness${opt('d_w',[[2,'Thin'],[3,'Normal'],[4,'Medium'],[5,'Thick'],[6,'Extra thick']],dc.w)}</label><label>Animation${opt('d_a',[['none','None'],['spin','Spin (gradient ring)'],['pulse','Pulse']],dc.an)}</label><label>Accessory${opt('d_c',[['','None'],...ACCS.map(x=>[x,x])],dc.acc)}</label></div>`;
+      const up=()=>{dc=cleanDc({style:q('#d_s').value,c1:q('#d_1').value,c2:q('#d_2').value,w:q('#d_w').value,an:q('#d_a').value,acc:q('#d_c').value});grid()};['#d_s','#d_1','#d_2','#d_w','#d_a','#d_c'].forEach(s=>{q(s).oninput=up})}
+     else if(deco==='image'){pan.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ghost" id="d_u">Upload decoration</button><button class="ghost" id="d_r">Remove</button></div><small style="color:var(--mut)">Use a PNG with a see-through middle, about 128×128. It is drawn around your picture.</small><input id="d_f" type="file" accept="image/png,image/webp" hidden>';
+      q('#d_u').onclick=()=>q('#d_f').click();q('#d_r').onclick=()=>{dimg='';grid()};q('#d_f').onchange=e=>{const f=e.target.files[0];if(f)shrinkPng(f,u=>{dimg=u;grid();toast('Decoration ready. Click Save.')});e.target.value=''}}
+     else pan.innerHTML=''};
+   grid();panel()}
+  q('#au').onclick=()=>{tgt='a';q('#pf').click()};q('#bu').onclick=()=>{tgt='b';q('#pf').click()};
+  q('#ar').onclick=()=>{pic='';toast('Avatar picture removed. Click Save.')};q('#br').onclick=()=>{ban='';toast('Banner picture removed. Click Save.')};
+  q('#pf').onchange=e=>{const f=e.target.files[0];if(!f)return;if(tgt==='a')shrink(f,96,96,.8,u=>{pic=u;toast('Avatar ready. Click Save.')});else shrink(f,420,140,.65,u=>{ban=u;toast('Banner ready. Click Save.')});e.target.value=''};
+  q('#o').onclick=()=>{P=clean({name:q('#pn').value,username:q('#pu').value,color:q('#pc').value,banner:q('#pb').value,bio:q('#pi').value,custom:q('#pt').value,status:q('#ps').value,theme:q('#pth').value,bg:q('#pbg').value,avatar:pic,bannerImg:ban,deco,dc,dimg,created:P.created});
+   ls.set('spian:profile',JSON.stringify(P));ls.set('spian:name',P.name);me.name=P.name;send({t:'profile',p:P});renderMe();d.close();toast('Profile saved')}},'wide scroll')}
+function rolesDlg(){const R=()=>st.roles||[];
+ modal(`<div style="padding:22px"><h2>Roles &amp; members</h2><div id="rl" style="display:grid;gap:8px"></div><div class="btns" style="margin-top:14px"><button class="ghost" id="c">Close</button></div></div>`,d=>{
+  const L=d.querySelector('#rl');d.querySelector('#c').onclick=()=>d.close();d.onclose=()=>{rolesPanel=null};
+  rolesPanel=()=>{L.innerHTML='';const sec=t=>{const e=document.createElement('div');e.style.cssText='color:var(--mut);font-size:12px;text-transform:uppercase;margin-top:8px';e.textContent=t;L.append(e)};
+   const row=(html,btns)=>{const r=document.createElement('div');r.className='dc';r.innerHTML=html;btns.forEach(x=>r.append(x));L.append(r)};
+   const btn=(t,fn,cls)=>{const b=document.createElement('button');b.textContent=t;if(cls)b.className=cls;b.onclick=fn;return b};
+   const my=myRank(),canR=selfR.owner;sec('Roles (highest first)');if(!canR){const n=document.createElement('div');n.style.cssText='color:var(--mut);font-size:12px';n.textContent='Only the server owner or host can create roles or give them to people.';L.append(n)}
+   row('<span class="sd" style="background:#f5b942;width:12px;height:12px"></span><div style="flex:1"><b>Owner</b><div style="color:var(--mut);font-size:12px">Can do everything. Cannot be changed.</div></div>',[]);
+   R().forEach((r,i)=>{const ps=[...PK.filter(k=>!VP.includes(k)&&r.perms[k]).map(k=>PL[k]),...VP.filter(k=>r.perms[k]===0).map(k=>'Cannot '+(k==='connect'?'connect to voice':'speak'))].join(', ')||'No special permissions',mine=selfR.owner||i>my;
+    const bs=[];if(canR&&mine){bs.push(btn('Edit',()=>{d.close();roleEdit(r)},'ghost'));if(r.id!=='member'){bs.push(btn('↑',()=>send({t:'rolemove',id:r.id,d:-1}),'ghost'),btn('↓',()=>send({t:'rolemove',id:r.id,d:1}),'ghost'),btn('Delete',()=>sure('Delete the role '+r.name+'? Members with it become Members.',()=>send({t:'roledel',id:r.id})),'danger'))}}
+    row('<span class="sd" style="background:'+r.color+';width:12px;height:12px"></span><div style="flex:1;min-width:0"><b style="color:'+r.color+'">'+esc(r.name)+'</b><div style="color:var(--mut);font-size:12px">'+esc(ps)+'</div></div>',bs)});
+   if(canR)L.append(btn('+ New role',()=>{d.close();roleEdit(null)}));
+   sec('Members online');members.forEach(m=>{const mi=R().findIndex(r=>r.id===m.rid),mrank=m.owner?-1:(mi<0?R().length:mi),bs=[];
+    if(m.id!==me.id&&!m.admin&&(selfR.admin||(!m.owner&&(selfR.owner||mrank>my)))){
+     if(canR){const sel=document.createElement('select');sel.className='sl';sel.style.width='auto';sel.innerHTML=R().map((r,i)=>(selfR.owner||i>my)?'<option value="'+r.id+'"'+(r.id===m.rid?' selected':'')+'>'+esc(r.name)+'</option>':'').join('');bs.push(sel,btn('Set role',()=>send({t:'assign',pid:m.id,role:sel.value}),'ghost'))}
+     if(myPerm('kick'))bs.push(btn('Kick',()=>sure('Kick '+m.name+' from this server?',()=>send({t:'kick',pid:m.id})),'danger'));if(myPerm('ban'))bs.push(btn('Ban',()=>sure('Ban '+m.name+'? They will not be able to rejoin this server.',()=>send({t:'ban',pid:m.id})),'danger'))}
+    row(avp(m)+'<div style="flex:1;min-width:0"><b style="color:'+(m.rcolor||'inherit')+'">'+esc(m.name)+'</b><div style="color:var(--mut);font-size:12px">'+esc(m.rname||'Member')+'</div></div>',bs)});
+   if(myPerm('ban')&&selfR.bans.length){sec('Banned');selfR.bans.forEach(b=>row('<div style="flex:1"><b>'+esc(b.name)+'</b></div>',[btn('Unban',()=>send({t:'unban',id:b.id}),'ghost')]))}};
+  rolesPanel()},'wide scroll')}
+function roleEdit(r){const my=myRank();
+ modal(`<div style="padding:22px"><h2>${r?'Edit role':'New role'}</h2><div class="g"><label>Name<input id="rn" maxlength="24" value="${r?esc(r.name):''}" ${r&&r.id==='member'?'disabled':''}></label><label>Colour<input id="rc" type="color" value="${r?r.color:'#8b5cf6'}"></label>
+${PK.map(k=>`<label style="justify-content:flex-start;gap:10px"><input type="checkbox" data-k="${k}" style="width:auto" ${(VP.includes(k)?(!r||r.perms[k]!==0):(r&&r.perms[k]))?'checked':''} ${(VP.includes(k)||myPerm(k))?'':'disabled'}>${PL[k]}</label>`).join('')}</div>
+<div class="btns"><button class="ghost" id="c">Cancel</button><button id="o">Save</button></div></div>`,d=>{
+  d.querySelector('#c').onclick=()=>{d.close();rolesDlg()};
+  d.querySelector('#o').onclick=()=>{const n=d.querySelector('#rn').value.trim();if(!n)return toast('Give the role a name.');const perms={};d.querySelectorAll('input[data-k]').forEach(c=>{perms[c.dataset.k]=c.checked});
+   send({t:'roleset',role:{id:r?r.id:'',name:n,color:d.querySelector('#rc').value,perms}});d.close();rolesDlg()}},'wide scroll')}
+const iceList=()=>{const t=st&&st.turn,ok=t&&t.urls&&t.urls.length&&(!t.urls.some(u=>/^turns?:/.test(u))||(t.username&&t.credential));return[...STUN,...(ok?[t]:[]),FREE_TURN]};
+async function netCheck(out){out.textContent='Checking… this takes about 6 seconds.';const L=[];
+ L.push('Secure page (https): '+(window.isSecureContext?'yes':'NO - the microphone needs https'));L.push('WebRTC supported: '+(window.RTCPeerConnection?'yes':'NO - use Chrome, Edge, Firefox or Safari'));
+ try{const s=await navigator.permissions.query({name:'microphone'});L.push('Microphone permission: '+s.state)}catch{L.push('Microphone permission: unknown')}
+ const types={};try{const pc=new RTCPeerConnection({iceServers:iceList()});pc.createDataChannel('x');pc.onicecandidate=e=>{if(e.candidate){const m=/ typ (\w+)/.exec(e.candidate.candidate);if(m)types[m[1]]=(types[m[1]]||0)+1}};await pc.setLocalDescription(await pc.createOffer());await new Promise(r=>setTimeout(r,6000));pc.close()}catch(e){L.push('Connection test error: '+e.message)}
+ L.push('Direct connection (STUN): '+(types.srflx?'works':'NOT found - your network may block peer-to-peer voice'));L.push('Relay (TURN): '+(types.relay?'works':'not available - people on strict networks may not hear you'));
+ L.push('Servers in use: '+iceList().map(s=>[].concat(s.urls)[0]).join(', '));L.push('Server host version: '+((st&&st.ver)||'old')+' | app version: '+((document.querySelector('meta[name=spian-version]')||{}).content||'?'));
+ out.textContent=L.join('\n')}
+function applyIce(){try{if(peer&&peer.options)peer.options.config=Object.assign({},peer.options.config||{},{iceServers:iceList()})}catch{}}
+async function getMic(){const id=ls.get('spian:mic'),base={echoCancellation:true,noiseSuppression:true,autoGainControl:true};
+ try{return await navigator.mediaDevices.getUserMedia({audio:id?{...base,deviceId:{exact:id}}:base})}catch(e){if(e.name==='OverconstrainedError'&&id){ls.set('spian:mic','');return getMic()}throw e}}
+const micErr=e=>e.name==='NotAllowedError'||e.name==='SecurityError'?'Microphone access was blocked. Click the lock icon next to the address, allow the microphone, then try again.':e.name==='NotFoundError'?'No microphone was found. Plug one in and try again.':e.name==='NotReadableError'?'Your microphone is being used by another app. Close it and try again.':'Could not start the microphone: '+(e.message||e.name);
+function voiceDlg(){const can=myPerm('channels'),T=st.turn||{};
+ modal(`<div style="padding:22px"><h2>Voice settings</h2>
+<div class="g"><label>Microphone<select id="mic" class="sl"><option value="">Default microphone</option></select></label>
+<label id="spkrow">Speakers<select id="spk" class="sl"><option value="">Default speakers</option></select></label>
+<div style="display:flex;gap:10px;align-items:center"><button class="ghost" id="st">Test speakers</button><small id="sto" style="color:var(--mut)"></small></div>
+<div style="display:flex;gap:10px;align-items:center"><button class="ghost" id="mt">Test microphone</button><div style="flex:1;height:8px;border-radius:4px;background:var(--ink);overflow:hidden"><div id="mtr" style="height:100%;width:0;background:#3ddc97"></div></div></div><small id="mto" style="color:var(--mut)"></small>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="ghost" id="cc">Run connection check</button><button class="ghost" id="ccp">Copy results</button></div><pre id="cco" style="white-space:pre-wrap;font-size:12px;color:var(--mut);margin:0"></pre></div>
+${can?`<h3 style="margin:18px 0 6px">Relay server (TURN)</h3><small style="color:var(--mut)">Helps people on strict networks or phone data hear each other. Get free details from a TURN provider and paste them here. Everyone in this server uses them automatically.</small>
+<div class="g" style="margin-top:8px"><input id="tu" placeholder="turn:example.com:443, turn:example.com:80" value="${esc((T.urls||[]).join(', '))}"><input id="tn" placeholder="Username" value="${esc(T.username||'')}"><input id="tc" placeholder="Credential" value="${esc(T.credential||'')}"></div>
+<div class="btns" style="justify-content:flex-start"><button id="ts">Save relay</button><button class="ghost" id="tx">Remove</button></div>`:''}
+<div class="btns" style="margin-top:14px"><button class="ghost" id="c">Close</button></div></div>`,d=>{
+  const q=s=>d.querySelector(s);q('#c').onclick=()=>d.close();
+  (async()=>{try{const ds=(await navigator.mediaDevices.enumerateDevices()).filter(x=>x.kind==='audioinput'),sel=q('#mic'),cur=ls.get('spian:mic')||'';ds.forEach((x,i)=>{if(!x.deviceId||x.deviceId==='default')return;const o=document.createElement('option');o.value=x.deviceId;o.textContent=x.label||'Microphone '+(i+1);if(x.deviceId===cur)o.selected=true;sel.append(o)})}catch{}})();
+  q('#st').onclick=()=>{const AC=window.AudioContext||window.webkitAudioContext;try{const c=new AC(),o=c.createOscillator(),g=c.createGain();o.frequency.value=523;g.gain.value=0.15;o.connect(g);g.connect(c.destination);o.start();setTimeout(()=>{o.stop();c.close()},700);q('#sto').textContent='Did you hear a beep? If not, raise your volume or pick other speakers.'}catch{q('#sto').textContent='Could not play a test sound.'}};
+  if(typeof HTMLMediaElement==='undefined'||!('setSinkId' in HTMLMediaElement.prototype))q('#spkrow').style.display='none';
+  (async()=>{try{const ds=(await navigator.mediaDevices.enumerateDevices()).filter(x=>x.kind==='audiooutput'),sel=q('#spk'),cur=ls.get('spian:spk')||'';ds.forEach((x,i)=>{if(!x.deviceId||x.deviceId==='default')return;const o=document.createElement('option');o.value=x.deviceId;o.textContent=x.label||'Speakers '+(i+1);if(x.deviceId===cur)o.selected=true;sel.append(o)})}catch{}})();
+  q('#spk').onchange=e=>{ls.set('spian:spk',e.target.value);Object.values(VS.audios).forEach(a=>{if(a.setSinkId)a.setSinkId(e.target.value).catch(()=>{})});toast('Speakers saved.')};
+  q('#cc').onclick=()=>netCheck(q('#cco'));q('#ccp').onclick=()=>{if(navigator.clipboard)navigator.clipboard.writeText(q('#cco').textContent);toast('Results copied')};
+  q('#mic').onchange=e=>{ls.set('spian:mic',e.target.value);toast('Microphone saved. It applies the next time you join voice.')};
+  q('#mt').onclick=async()=>{const bar=q('#mtr'),out=q('#mto');out.textContent='Listening… say something.';let s;try{s=await getMic()}catch(e){out.textContent=micErr(e);return}
+   const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC(),an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(s).connect(an);const buf=new Uint8Array(an.fftSize);let peak=0;const t0=Date.now();
+   const iv=setInterval(()=>{an.getByteTimeDomainData(buf);let m=0;for(const b of buf)m=Math.max(m,Math.abs(b-128)/128);peak=Math.max(peak,m);bar.style.width=Math.min(100,m*220)+'%';
+    if(Date.now()-t0>6000){clearInterval(iv);s.getTracks().forEach(t=>t.stop());try{ctx.close()}catch{}bar.style.width='0';out.textContent=peak>0.08?'✔ Your microphone works.':'No sound heard. Check that the right microphone is selected and not muted.'}},60)};
+  if(can){q('#ts').onclick=()=>{const urls=q('#tu').value.split(',').map(x=>x.trim()).filter(Boolean);if(!urls.length)return toast('Enter at least one relay address that starts with turn:');send({t:'setturn',turn:{urls,username:q('#tn').value.trim(),credential:q('#tc').value.trim()}});toast('Relay saved for this server.')};
+   q('#tx').onclick=()=>{send({t:'setturn',turn:null});q('#tu').value=q('#tn').value=q('#tc').value='';toast('Relay removed.')}}},'wide scroll')}
+const VS={retry:{},hear:{},warned:false,needTap:false,cid:null,status:'idle',muted:false,deaf:false,wasMuted:false,srv:false,speaking:false,stream:null,calls:{},audios:{},stopVad:null,timer:null,iv:null},VOL={},vbx={};
+const vbox=cid=>vbx[cid]||(vbx[cid]=Object.assign(document.createElement('div'),{className:'vbox'}));
+function chanTools(d,ch){if(!myPerm('channels'))return;const r=document.createElement('a');r.textContent='✎';r.title='Rename';r.onclick=e=>{e.stopPropagation();modal(`<div style="padding:22px"><h2>Rename channel</h2><div class="g"><input id="n" maxlength="32" value="${esc(ch.name)}"></div><div class="btns"><button class="ghost" id="c">Cancel</button><button id="o">Save</button></div></div>`,d2=>{d2.querySelector('#c').onclick=()=>d2.close();d2.querySelector('#o').onclick=()=>{send({t:'renchan',id:ch.id,name:d2.querySelector('#n').value});d2.close()}},'wide')};d.append(r);
+ if(ch.id!=='general'){const x=document.createElement('a');x.textContent='✕';x.title='Delete';x.onclick=e=>{e.stopPropagation();sure('Delete '+ch.name+(ch.type==='voice'?'?':' and its messages?'),()=>send({t:'delchan',id:ch.id}))};d.append(x)}}
+function renderChans(){const c=$('chans');c.innerHTML='';
+ const head=t=>{const e=document.createElement('div');e.className='sec';e.textContent=t;c.append(e)};
+ head('Text channels');
+ st.channels.filter(x=>x.type!=='voice').forEach(ch=>{const d=document.createElement('div');d.className='ch'+(ch.id===cur?' on':'')+(unread.has(ch.id)?' un':'');d.innerHTML='<span># '+esc(ch.name)+'</span>';chanTools(d,ch);d.onclick=()=>pick(ch.id);c.append(d)});
+ head('Voice channels');
+ if(!isHost&&!(st.ver>=5)){const n=document.createElement('div');n.style.cssText='color:var(--mut);font-size:12px;padding:4px 10px';n.textContent='This server’s host is on an old version, so voice is not available yet. Ask them to reload the page.';c.append(n)}
+ st.channels.filter(x=>x.type==='voice').forEach(ch=>{const n=Object.keys(vroom[ch.id]||{}).length,d=document.createElement('div');d.className='ch vc'+(VS.cid===ch.id?' on':'');d.innerHTML='<span>🔊 '+esc(ch.name)+'</span><small class="cnt">'+(n?n+(n===1?' person':' people'):'')+'</small>';chanTools(d,ch);d.onclick=()=>vJoin(ch.id);c.append(d);c.append(vbox(ch.id))});
+ if(myPerm('channels')){const b=document.createElement('button');b.className='ghost';b.style.cssText='width:100%;margin-top:10px';b.textContent='+ New channel';
+  b.onclick=()=>modal(`<div style="padding:22px"><h2>New channel</h2><div class="g"><input id="n" maxlength="32" placeholder="channel-name"><select id="k" class="sl" style="width:100%"><option value="text"># Text channel</option><option value="voice">🔊 Voice channel</option></select></div><div class="btns"><button class="ghost" id="c">Cancel</button><button id="o">Create</button></div></div>`,d=>{d.querySelector('#c').onclick=()=>d.close();d.querySelector('#o').onclick=()=>{send({t:'newchan',name:d.querySelector('#n').value,type:d.querySelector('#k').value});d.close()}},'wide');c.append(b)}
+ updateVoice()}
+function updateVoice(){(st.channels||[]).filter(x=>x.type==='voice').forEach(ch=>{const box=vbox(ch.id),room=vroom[ch.id]||{};
+  [...box.children].forEach(el=>{if(!room[el.dataset.id]&&!el.classList.contains('out')){el.classList.add('out');setTimeout(()=>el.remove(),230)}});
+  Object.keys(room).forEach(id=>{let el=box.querySelector('[data-id="'+id+'"]:not(.out)');const x=room[id],m=members.find(y=>y.id===id)||{name:x.n||'Someone'};
+   if(!el){el=document.createElement('div');el.className='vu in';el.dataset.id=id;el.innerHTML='<span class="avw"></span><span class="nm"></span><span class="net"></span><span class="mic"></span><input type="range" class="vol" min="0" max="100" title="Volume">';box.append(el);
+    const v=el.querySelector('.vol');v.value=(VOL[id]===undefined?1:VOL[id])*100;v.oninput=()=>{VOL[id]=v.value/100;const a=VS.audios[id];if(a)a.volume=VOL[id]}}
+   const key=m.name+'|'+(m.avatar||'').length+'|'+(m.color||'');if(el.dataset.k!==key){el.dataset.k=key;el.querySelector('.avw').innerHTML=avp(m);el.querySelector('.nm').textContent=m.name}
+   el.querySelector('.mic').textContent=x.d?'🙉':x.m?'🔇':'🎤';
+   {const n=el.querySelector('.net');if(id!==me.id&&VS.cid===ch.id){const c=VS.calls[id],bad=c&&c.peerConnection&&['failed','disconnected'].includes(c.peerConnection.iceConnectionState);n.textContent=VS.audios[id]?(VS.hear[id]?'🔊':'✔'):bad?'⚠':'…';n.title=VS.audios[id]?(VS.hear[id]?'You are hearing them':'Connected. They are quiet right now'):bad?'Connection problem':'Connecting audio…'}else n.textContent=''}el.classList.toggle('speak',!!x.s&&!x.m);el.classList.toggle('muted',!!(x.m||x.d));
+   el.querySelector('.vol').style.display=(id!==me.id&&VS.cid===ch.id)?'':'none'})})}
+// ---- voice client (WebRTC audio, signalling goes through the server host) ----
+function showLoad(m){$('vlm').textContent=m;$('vload').classList.remove('err');$('vload').style.display='grid';$('vlc').textContent='Cancel'}
+function hideLoad(){$('vload').style.display='none'}
+function vErr(m){vCleanup();$('vlm').textContent=m;$('vload').classList.add('err');$('vload').style.display='grid';$('vlc').textContent='Close';toast(m)}
+function vUI(){const on=!!VS.cid;$('vpanel').style.display=on?'block':'none';if(!on)return;const ch=st.channels.find(c=>c.id===VS.cid);$('vch').textContent='🔊 '+(ch?ch.name:'Voice')+' · '+(st.name||'Spian');
+ const bad=Object.values(VS.calls).some(c=>c.peerConnection&&['failed','disconnected'].includes(c.peerConnection.iceConnectionState));
+ if(bad&&!VS.warned){VS.warned=true;toast('Voice connection to someone dropped. Their network may block direct voice. The server owner can add a relay in Voice settings.')}
+ const s=VS.status==='connecting'?['Connecting…','#f5b942']:bad?['Poor connection','#f0506e']:Object.keys(VS.calls).some(id=>!VS.audios[id])?['Connecting to others…','#f5b942']:['Voice connected','#3ddc97'];
+ $('vtx').textContent=s[0];$('vdot').style.background=s[1];$('vmute').textContent=VS.muted?'🔇 Unmute':'🎤 Mute';$('vdeaf').textContent=VS.deaf?'🔊 Undeafen':'🎧 Deafen'}
+function vCleanup(){clearTimeout(VS.timer);clearInterval(VS.iv);if(VS.stopVad)VS.stopVad();if(VS.stream)VS.stream.getTracks().forEach(t=>t.stop());Object.values(VS.calls).forEach(c=>{try{c.close()}catch{}});Object.values(VS.audios).forEach(a=>{a.srcObject=null;a.remove()});
+ Object.assign(VS,{retry:{},hear:{},warned:false,cid:null,status:'idle',muted:false,deaf:false,wasMuted:false,srv:false,speaking:false,stream:null,calls:{},audios:{},stopVad:null,timer:null,iv:null});vUI();if(entered)renderChans()}
+async function vJoin(cid){if(VS.cid===cid)return;if(VS.cid){send({t:'vleave'});vCleanup()}
+ if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia))return vErr('This browser cannot use the microphone. Use a current Chrome, Edge, Firefox or Safari, on an https link.');
+ if(!isHost&&!(hc&&hc.open))return toast('Not connected to the server yet.');
+ VS.cid=cid;VS.status='connecting';vUI();showLoad('Connecting to voice…');renderChans();
+ try{VS.stream=await getMic()}catch(e){return vErr(micErr(e))}
+ if(VS.cid!==cid){VS.stream&&VS.stream.getTracks().forEach(t=>t.stop());return}
+ applyIce();VS.stopVad=vad(VS.stream);send({t:'vjoin',cid});VS.timer=setTimeout(()=>{if(VS.status==='connecting')vErr('Could not connect to voice. The server did not respond.')},10000)}
+function vPeers(o){if(o.cid!==VS.cid)return;clearTimeout(VS.timer);VS.status='connected';hideLoad();o.peers.forEach(callPeer);VS.iv=setInterval(vUI,2000);vUI();renderChans()}
+function callPeer(id){if(VS.calls[id]||id===me.id||!VS.stream)return;let c;try{c=peer.call(id,VS.stream)}catch{return}if(c){c._out=true;wireCall(c,id)}}
+function watch(id,rs){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;try{const ctx=new AC(),an=ctx.createAnalyser();an.fftSize=256;ctx.createMediaStreamSource(rs).connect(an);if(ctx.resume)ctx.resume();const buf=new Uint8Array(an.fftSize);
+ const iv=setInterval(()=>{if(!VS.audios[id]){clearInterval(iv);try{ctx.close()}catch{}return}an.getByteTimeDomainData(buf);let m=0;for(const b of buf)m=Math.max(m,Math.abs(b-128)/128);const on=m>0.03;if(VS.hear[id]!==on){VS.hear[id]=on;updateVoice()}},150)}catch{}}
+function wireCall(c,id){VS.calls[id]=c;setTimeout(()=>{if(VS.calls[id]!==c||VS.audios[id])return;if(c._out&&(VS.retry[id]=(VS.retry[id]||0)+1)<=2){dropCall(id);callPeer(id);return}if(!VS.warned){VS.warned=true;toast('Could not connect audio to someone. Their network may block direct voice. The server owner can add a relay in Voice settings.')}},12000);c.on('stream',rs=>{if(VS.audios[id])return;const a=document.createElement('audio');a.autoplay=true;a.setAttribute('playsinline','');a.srcObject=rs;a.volume=VOL[id]===undefined?1:VOL[id];a.muted=VS.deaf;{const sk=ls.get('spian:spk');if(sk&&a.setSinkId)a.setSinkId(sk).catch(()=>{})}$('audios').append(a);VS.audios[id]=a;watch(id,rs);const pl=a.play&&a.play();if(pl&&pl.catch)pl.catch(()=>{VS.needTap=true;toast('Tap anywhere on the page to turn on sound.')});vUI()});c.on('close',()=>dropCall(id));c.on('error',()=>dropCall(id))}
+function dropCall(id){const c=VS.calls[id];if(c){try{c.close()}catch{}}delete VS.calls[id];const a=VS.audios[id];if(a){a.srcObject=null;a.remove();delete VS.audios[id]}vUI()}
+function onCall(c){if(!VS.stream||!VS.cid)return c.close();let n=0;const go=()=>{if(!VS.cid)return c.close();const room=vroom[VS.cid];if(room&&room[c.peer]){applyIce();c.answer(VS.stream);wireCall(c,c.peer)}else if(n++<40)setTimeout(go,200);else c.close()};go()}
+function vsync(){if(!VS.cid)return;const room=vroom[VS.cid],x=room&&room[me.id];if(!x){if(VS.status==='connected'){vCleanup();hideLoad()}return}
+ Object.keys(VS.calls).forEach(id=>{if(!room[id])dropCall(id)});VS.srv=!!x.srv;if(x.srv&&!VS.muted)setMute(true,true);vUI()}
+function setMute(m,force){if(VS.srv&&!m&&!force)return toast('You do not have permission to speak here.');VS.muted=m;if(VS.stream)VS.stream.getAudioTracks().forEach(t=>t.enabled=!m);send({t:'vstate',m:VS.muted,d:VS.deaf});vUI()}
+function setDeaf(d){VS.deaf=d;if(d){VS.wasMuted=VS.muted;VS.muted=true}else VS.muted=VS.srv?true:VS.wasMuted;if(VS.stream)VS.stream.getAudioTracks().forEach(t=>t.enabled=!VS.muted);Object.values(VS.audios).forEach(a=>a.muted=d);send({t:'vstate',m:VS.muted,d:VS.deaf});vUI()}
+function vad(stream){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return()=>{};let ctx;try{ctx=new AC()}catch{return()=>{}}const an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(stream).connect(an);const buf=new Uint8Array(an.fftSize);let on=false,hold=0;
+ const iv=setInterval(()=>{an.getByteTimeDomainData(buf);let s=0;for(const b of buf){const v=(b-128)/128;s+=v*v}const talk=Math.sqrt(s/buf.length)>0.035&&!VS.muted;if(talk)hold=6;else if(hold>0)hold--;if((hold>0)!==on){on=hold>0;speakChanged(on)}},80);return()=>{clearInterval(iv);try{ctx.close()}catch{}}}
+function speakChanged(on){VS.speaking=on;if(!isHost&&!(hc&&hc.open))return;send({t:'vspeak',s:on});if(!isHost){const x=vroom[VS.cid]&&vroom[VS.cid][me.id];if(x){x.s=on&&!x.m;updateVoice()}}}
+document.addEventListener('click',()=>{if(VS.needTap){VS.needTap=false;Object.values(VS.audios).forEach(a=>a.play&&a.play().catch(()=>{}))}});
+$('vmute').onclick=()=>setMute(!VS.muted);$('vdeaf').onclick=()=>setDeaf(!VS.deaf);$('vdis').onclick=()=>{send({t:'vleave'});vCleanup();hideLoad()};
+$('vlc').onclick=()=>{if(VS.cid)send({t:'vleave'});vCleanup();hideLoad()};
+function pick(id){cur=id;unread.delete(id);cancelEdit();document.body.classList.remove('nav');const c=st.channels.find(x=>x.id===id&&x.type!=='voice')||st.channels.find(x=>x.type!=='voice');if(c)cur=c.id;$('tt').textContent='# '+(c?c.name:'general');$('mi').placeholder='Message #'+(c?c.name:'general');renderChans();renderMem();renderMsgs(true)}
+function renderMsgs(force){const box=$('msgs'),near=force||box.scrollHeight-box.scrollTop-box.clientHeight<120;box.innerHTML='';const L=st.messages.filter(m=>m.cid===cur);
+ if(!L.length){box.innerHTML='<div class="empty"><h2>This is the start of the channel</h2>Say hello. The host’s browser keeps the history.</div>';return}
+ let last=null;L.forEach(m=>{const mine=m.uid===me.id,grp=last&&last.uid===m.uid&&m.ts-last.ts<300000;last=m;const time=new Date(m.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const pr=prof(m.uid,m.name);const d=document.createElement('div');d.className='row'+(grp?'':' first');
+  d.innerHTML=(grp?'<div class="gut">'+time+'</div>':avp(pr))+'<div class="bd">'+(grp?'':'<div class="hd"><b style="color:'+(pr.rcolor||'inherit')+'">'+esc(pr.name)+'</b><small>'+time+'</small></div>')+'<div class="t">'+md(m.text)+'</div><span class="ed">'+(m.edited?'(edited)':'')+'</span></div>';
+  const act=document.createElement('div');act.className='act';
+  if(mine){const e=document.createElement('button');e.textContent='Edit';e.onclick=()=>{editing=m.id;$('mi').value=m.text;$('eb').style.display='block';$('mi').focus();grow()};act.append(e)}
+  if(mine||myPerm('delete')){const x=document.createElement('button');x.textContent='Delete';x.onclick=()=>sure('Delete this message?',()=>send({t:'del',id:m.id}));act.append(x)}
+  d.onclick=e=>{if(e.target.closest&&e.target.closest('button,.av,.hd b'))return;const was=d.classList.contains('sel');box.querySelectorAll('.row.sel').forEach(x=>x.classList.remove('sel'));if(!was)d.classList.add('sel')};
+  d.querySelectorAll('.av,.hd b').forEach(e=>{e.style.cursor='pointer';e.onclick=()=>card(m.uid,m.name)});if(act.children.length)d.append(act);box.append(d)});
+ if(near)box.scrollTop=box.scrollHeight}
+function cancelEdit(){editing=null;$('mi').value='';$('eb').style.display='none';grow()}
+function grow(){const e=$('mi');e.style.height='auto';e.style.height=Math.min(e.scrollHeight,180)+'px'}
+let lt=0;$('mi').oninput=()=>{grow();if(!editing&&Date.now()-lt>2000){lt=Date.now();send({t:'typing',cid:cur})}};
+const coarse=typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches;
+function sendMsg(){const v=$('mi').value.trim();if(!v)return;if(editing){send({t:'edit',id:editing,text:v});cancelEdit()}else{send({t:'msg',cid:cur,text:v});$('mi').value='';grow()}}
+$('mi').onkeydown=e=>{if(e.key==='Escape'&&editing)return cancelEdit();if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!coarse){e.preventDefault();sendMsg()}};
+$('sb').onmousedown=e=>e.preventDefault();$('sb').onclick=()=>{sendMsg();$('mi').focus()};
+$('mi').onfocus=()=>setTimeout(()=>{$('msgs').scrollTop=$('msgs').scrollHeight},350);
+$('scrim').onclick=()=>document.body.classList.remove('nav','mem');$('mt').onclick=()=>document.body.classList.toggle('mem');
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&entered&&!isHost&&!(hc&&hc.open)){if(forced)location.reload();else link()}});
+
+// ---------- multi-room shell: each room runs in its own frame ----------
+// ---- auto-update: when the hosted file changes, tell the user to reload (rooms, profile and friends are kept) ----
+let updShown=false;const busyMap={};
+function autoReload(){const last=+ls.get('spian:lastauto')||0;setTimeout(function tick(){if(Date.now()-last<600000)return;if(Object.values(busyMap).some(Boolean))return setTimeout(tick,30000);ls.set('spian:lastauto',String(Date.now()));location.reload()},30000)}
+async function checkUpdate(){if(updShown||location.protocol==='file:'||typeof fetch!=='function')return;
+ try{const mine=(document.querySelector('meta[name=spian-version]')||{}).content;if(!mine)return;
+  const r=await fetch(location.href.split('#')[0].split('?')[0]+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const t=await r.text(),m=t.match(/name="spian-version" content="([^"]+)"/);
+  if(m&&m[1]!==mine){updShown=true;$('upd').style.display='block';$('updb').onclick=()=>location.reload();autoReload()}}catch{}}
+function adminDlg(){const has=!!ls.get('spian:adminkey');
+ modal(`<div style="padding:22px"><h2>Admin key</h2><p style="color:var(--mut);margin-top:0">Only for the person who was given an admin key or code. If that is not you, you do not need this.</p><div class="g"><textarea id="ak" rows="4" placeholder="Paste your admin key, or type your code"></textarea></div>${has?'<p style="color:var(--mut);font-size:13px">A key is saved in this browser.</p>':''}
+<div class="btns"><button class="ghost" id="c">Cancel</button>${has?'<button class="danger" id="rm">Remove key</button>':''}<button id="sv">Save</button></div></div>`,d=>{
+  const q=s=>d.querySelector(s);q('#c').onclick=()=>d.close();
+  if(has)q('#rm').onclick=()=>{try{localStorage.removeItem('spian:adminkey')}catch{}toast('Admin key removed.');d.close();setTimeout(()=>location.reload(),700)};
+  q('#sv').onclick=async()=>{const v=q('#ak').value.trim();if(!v)return toast('Paste your key or type your code first.');let key=null;
+   try{const j=JSON.parse(v);if(j.kty==='EC'&&j.d&&j.x&&j.y)key=v}catch{}
+   if(!key&&v[0]!=='{'){const until=+ls.get('spian:pinlock')||0;if(Date.now()<until)return toast('Too many wrong codes. Wait a minute and try again.');
+    toast('Checking code…');key=await pinUnlock(v);
+    if(!key){const f=(+ls.get('spian:pinfail')||0)+1;ls.set('spian:pinfail',String(f));if(f>=5){ls.set('spian:pinlock',String(Date.now()+60000));ls.set('spian:pinfail','0')}return toast('Wrong code.')}ls.set('spian:pinfail','0')}
+   if(!key)return toast('That is not a valid admin key.');ls.set('spian:adminkey',key);toast('Admin key saved. Reloading…');d.close();setTimeout(()=>location.reload(),700)}},'wide')}
+function shell(){
+ let rs=[],act=null,dots={};try{rs=JSON.parse(ls.get('spian:rooms'))||[]}catch{}
+ const sh=$('shell'),fr=$('frames'),rail=$('srail'),sv=()=>ls.set('spian:rooms',JSON.stringify(rs));$('app').style.display='none';$('land').style.display='none';sh.style.display='grid';if(!ls.get('spian:name'))ls.set('spian:name','Guest'+Math.floor(1000+Math.random()*9000));
+ function draw(){rail.innerHTML='<div class="logo">S</div>';
+  rs.forEach(r=>{const d=document.createElement('div');d.className='sv'+(r.code===act?' on':'');d.style.background=hue(r.code);d.title=(r.name||('Server '+r.code))+(r.type==='host'?' (yours)':'');d.textContent=(r.name||r.code)[0].toUpperCase();
+   if(dots[r.code])d.insertAdjacentHTML('beforeend','<i class="ud"></i>');
+   if(r.code===act){const x=document.createElement('b');x.className='rx';x.textContent='✕';x.title='Leave this server';x.onclick=e=>{e.stopPropagation();rm(r.code)};d.append(x)}
+   d.onclick=()=>show(r.code);rail.append(d)});
+  const a=document.createElement('div');a.className='sv add';a.textContent='+';a.title='Add a server';a.onclick=addDlg;rail.append(a);const g=document.createElement('div');g.className='sv add';g.textContent='🧭';g.title='Discover public servers';g.style.fontSize='20px';g.onclick=discover;rail.append(g);const f=document.createElement('div');f.className='sv add';f.textContent='👥';f.title='Friends';f.style.fontSize='20px';f.onclick=friends;const k=document.createElement('div');k.className='sv add';k.textContent='🔑';k.title='Admin key';k.style.fontSize='18px';k.onclick=adminDlg;
+  if(fl.some(x=>x.state==='in')||invs.length)f.insertAdjacentHTML('beforeend','<i class="ud"></i>');rail.append(f);rail.append(k)}
+ function frame(r){if(document.getElementById('f'+r.code))return;const f=document.createElement('iframe');f.id='f'+r.code;f.title='Server '+r.code;f.allow='microphone; autoplay; camera';
+  f.src=location.href.split('#')[0]+'#'+new URLSearchParams({mode:r.type,code:r.code,name:ls.get('spian:name')||'Guest',sname:r.name||'',pub:r.pub?'1':'0'});fr.append(f)}
+ function show(c){act=c;delete dots[c];$('empty').style.display='none';[...fr.children].forEach(f=>f.style.display=f.id==='f'+c?'block':'none');draw()}
+ function add(type,code,meta){if(String(code).trim().toLowerCase()==='global'){type='auto';meta={name:'Spian Global'};code='global';ls.set('spian:noglobal','')}code=code.trim().toLowerCase().replace(/^spian-/,'').replace(/[^a-z0-9]/g,'');if(!code)return toast('Enter a server code.');
+  if(rs.some(r=>r.code===code))return show(code);rs.push({type,code,...(meta||{})});sv();frame(rs[rs.length-1]);show(code)}
+ function rm(c){const r=rs.find(x=>x.code===c);sure('Leave server '+c+'?'+(r&&r.type==='host'?' You are the host, so everyone in it will be disconnected.':''),()=>{const f=document.getElementById('f'+c);if(f)f.remove();rs=rs.filter(x=>x.code!==c);sv();unreg(c);if(c==='global')ls.set('spian:noglobal','1');
+  if(rs.length)show(rs[0].code);else{act=null;$('empty').style.display='flex';draw()}})}
+ function addDlg(){modal(`<h2>Add a server</h2><div class="g"><button id="ns">Make a server</button>${ls.get('spian:noglobal')?'<button class="ghost" id="gg">Rejoin Spian Global</button>':''}</div><hr style="border:0;border-top:1px solid var(--line);margin:4px 0 14px"><div class="g"><input id="jc2" maxlength="12" placeholder="Server code from a friend"></div><div class="btns"><button class="ghost" id="c">Cancel</button><button id="jn">Join server</button></div>`,d=>{
+  d.querySelector('#c').onclick=()=>d.close();{const gg=d.querySelector('#gg');if(gg)gg.onclick=()=>{d.close();add('auto','global')}}
+  d.querySelector('#ns').onclick=()=>{d.close();mkDlg()};d.querySelector('#jn').onclick=()=>{const v=d.querySelector('#jc2').value;d.close();add('join',v)}})}
+ // ---- public server directory: whichever open Spian page claims the id "spian-directory" keeps the list ----
+ let isDir=false,dirConn=null,pend=null,listing={};
+ const regAll=()=>rs.filter(r=>r.type==='host'&&r.pub).forEach(r=>{const m={t:'reg',code:r.code,name:r.name||'Server',desc:r.desc||'',members:r.members||1};if(isDir)listing[r.code]={...m,conn:'self'};else if(dirConn&&dirConn.open)dirConn.send(m)});
+ function unreg(c){if(isDir&&listing[c]&&listing[c].conn==='self')delete listing[c];else if(dirConn&&dirConn.open)dirConn.send({t:'unreg',code:c})}
+ function dirStart(){if(!libReady)return setTimeout(dirStart,1000);const p=new Peer('spian-directory');
+  p.on('open',()=>{isDir=true;dirConn=null;p.on('connection',c=>{c.on('data',m=>{if(!m||typeof m!=='object')return;
+    if(m.t==='reg'&&typeof m.code==='string')listing[m.code.slice(0,12)]={code:m.code.slice(0,12),name:str(m.name,40)||'Server',desc:str(m.desc,120),members:Math.min(999,m.members|0),conn:c.peer};
+    else if(m.t==='unreg'&&listing[m.code]&&listing[m.code].conn===c.peer)delete listing[m.code];
+    else if(m.t==='list')c.send({t:'list',items:Object.values(listing).map(x=>({code:x.code,name:x.name,desc:x.desc,members:x.members}))})});
+   c.on('close',()=>{for(const k in listing)if(listing[k].conn===c.peer)delete listing[k]})});regAll()});
+  p.on('error',e=>{try{p.destroy()}catch{}if(e.type==='unavailable-id'){isDir=false;dirJoin()}else setTimeout(dirStart,5000)})}
+ function dirJoin(){const p=new Peer();p.on('open',()=>{const c=p.connect('spian-directory',{reliable:true});c.on('open',()=>{dirConn=c;regAll()});
+  c.on('data',m=>{if(m&&m.t==='list'&&pend){const f=pend;pend=null;f(Array.isArray(m.items)?m.items:[])}});c.on('close',()=>{dirConn=null;try{p.destroy()}catch{}setTimeout(dirStart,2000)})});
+  p.on('error',()=>{try{p.destroy()}catch{}dirConn=null;setTimeout(dirStart,4000)})}
+ function mkDlg(){modal(`<div style="padding:22px"><h2>Make a server</h2><div class="g"><input id="sn2" maxlength="40" placeholder="Server name"><input id="sd" maxlength="120" placeholder="Short description (optional)"><label style="justify-content:flex-start;gap:8px"><input type="checkbox" id="sp" style="width:auto">Public: list it in Discover so anyone can join without a code</label></div><div class="btns"><button class="ghost" id="c">Cancel</button><button id="o">Create</button></div></div>`,d=>{
+  d.querySelector('#c').onclick=()=>d.close();d.querySelector('#o').onclick=()=>{const n=d.querySelector('#sn2').value.trim().slice(0,40);if(!n)return toast('Give your server a name.');
+   const pub=!!d.querySelector('#sp').checked,desc=d.querySelector('#sd').value.trim().slice(0,120);d.close();add('host',rand(6),{name:n,desc,pub});setTimeout(regAll,1500)}},'wide')}
+ function discover(){modal(`<div style="padding:22px"><h2>Discover servers</h2><div id="dl" style="display:grid;gap:10px;max-height:60vh;overflow:auto"><p style="color:var(--mut);margin:0">Looking for public servers…</p></div><div class="btns" style="margin-top:14px"><button class="ghost" id="c">Close</button></div></div>`,d=>{
+  d.querySelector('#c').onclick=()=>d.close();const L=d.querySelector('#dl'),t0=Date.now();
+  const list=items=>{L.innerHTML='';if(!items.length){L.innerHTML='<p style="color:var(--mut);margin:0">No public servers are online right now. Make one and tick “Public”.</p>';return}
+   items.forEach(x=>{const code=String(x.code||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12);if(!code)return;const joined=rs.some(r=>r.code===code),row=document.createElement('div');row.className='dc';
+    row.innerHTML=avp({name:String(x.name||'S')})+'<div style="flex:1;min-width:0"><b>'+esc(String(x.name||'Server'))+'</b><div style="color:var(--mut);font-size:13px">'+esc(String(x.desc||''))+'</div><small style="color:var(--mut)">'+((+x.members)||1)+' online</small></div>';
+    const b=document.createElement('button');b.textContent=joined?'Joined':'Join';b.disabled=joined;b.onclick=()=>{d.close();add('join',code)};row.append(b);L.append(row)})};
+  (function go(){if(isDir)return list(Object.values(listing));
+   if(dirConn&&dirConn.open){pend=list;dirConn.send({t:'list'});setTimeout(()=>{if(pend===list){pend=null;L.innerHTML='<p style="color:var(--red);margin:0">The directory did not answer. Try again in a moment.</p>'}},6000);return}
+   if(Date.now()-t0<7000)setTimeout(go,400);else L.innerHTML='<p style="color:var(--red);margin:0">Could not reach the server directory. Check your internet and try again.</p>'})()},'wide')}
+ // ---- friends: each person has a friend code; requests and server invites go directly between browsers ----
+ let myId=ls.get('spian:uid');if(!myId){myId=rand(8);ls.set('spian:uid',myId)}
+ let fl=[],invs=[],online={},inbox=null,panel=null;try{fl=JSON.parse(ls.get('spian:friends'))||[]}catch{}
+ const svF=()=>ls.set('spian:friends',JSON.stringify(fl)),okId=s=>typeof s==='string'&&/^[a-z0-9]{6,12}$/.test(s),fnd=id=>fl.find(f=>f.id===id),meP=()=>loadP(ls.get('spian:name')||'Guest');
+ const touch=()=>{svF();draw();if(panel)panel()};
+ function tell(id,msg,cb){const mine=inbox&&inbox.open,p=mine?inbox:new Peer();if(!mine)p.on('error',()=>{});
+  const go=()=>{let done=false;const c=p.connect('spian-u-'+id,{reliable:true}),fin=ok=>{if(done)return;done=true;try{c.close()}catch{}if(!mine)try{p.destroy()}catch{}cb&&cb(ok)};
+   c.on('open',()=>{c.send(msg);setTimeout(()=>fin(true),250)});setTimeout(()=>fin(false),5000)};if(mine)go();else p.on('open',go)}
+ function onMsg(m){if(!m||typeof m!=='object'||!okId(m.id))return;const f=fnd(m.id),nm=str(m.name,24)||m.id;
+  if(m.t==='req'){if(f&&f.state==='friend'){tell(m.id,{t:'acc',id:myId,name:meP().name});return}
+   if(f&&f.state==='out'){f.state='friend';f.name=nm;tell(m.id,{t:'acc',id:myId,name:meP().name});toast(nm+' is now your friend');touch();return}
+   if(!f){fl.push({id:m.id,name:nm,state:'in'});toast(nm+' sent you a friend request');touch()}}
+  else if(m.t==='acc'&&f&&f.state==='out'){f.state='friend';f.name=nm;toast(nm+' accepted your friend request');touch()}
+  else if(m.t==='dec'&&f&&f.state==='out'){fl=fl.filter(x=>x!==f);toast(nm+' declined your request');touch()}
+  else if(m.t==='rm'&&f&&f.state==='friend'){fl=fl.filter(x=>x!==f);touch()}
+  else if(m.t==='inv'&&f&&f.state==='friend'&&okId(String(m.code||'').toLowerCase())){const sn=str(m.sname,40)||'a server';invs.push({from:f.name,code:String(m.code).toLowerCase(),sname:sn});toast(f.name+' invited you to '+sn);touch()}}
+ function sync(){fl.forEach(f=>{if(f.state==='out')tell(f.id,{t:'req',id:myId,name:meP().name});
+  else if(f.state==='friend'){if(f.needAck)tell(f.id,{t:'acc',id:myId,name:meP().name},ok=>{if(ok){delete f.needAck;svF()}});else tell(f.id,{t:'ping',id:myId},ok=>{if(online[f.id]!==ok){online[f.id]=ok;if(panel)panel()}})}})}
+ function inboxStart(){if(!libReady)return setTimeout(inboxStart,1000);const p=new Peer('spian-u-'+myId);p.on('open',()=>{inbox=p;sync()});p.on('connection',c=>c.on('data',onMsg));p.on('error',e=>{if(e.type!=='unavailable-id'&&e.type!=='peer-unavailable')setTimeout(inboxStart,5000)})}
+ function friends(){modal(`<div style="padding:22px"><h2>Friends</h2><small style="color:var(--mut)">Your friend code. Share it so people can add you.</small><div style="display:flex;gap:8px;margin:6px 0 14px"><input readonly id="mc" value="${myId}"><button class="ghost" id="cp">Copy</button></div>
+<div style="display:flex;gap:8px;margin-bottom:14px"><input id="fc" maxlength="12" placeholder="Friend’s code"><button id="fa">Add</button></div><div id="fl" style="display:grid;gap:8px;max-height:45vh;overflow:auto"></div><div class="btns" style="margin-top:14px"><button class="ghost" id="c">Close</button></div></div>`,d=>{
+  const L=d.querySelector('#fl'),q=s=>d.querySelector(s);q('#c').onclick=()=>d.close();d.onclose=()=>{panel=null};
+  q('#cp').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(myId);toast('Friend code copied')};
+  q('#fa').onclick=()=>{const id=q('#fc').value.trim().toLowerCase();if(!okId(id))return toast('Enter your friend’s code.');if(id===myId)return toast('That is your own code.');if(fnd(id))return toast('You already have that person.');
+   fl.push({id,name:id,state:'out'});touch();q('#fc').value='';tell(id,{t:'req',id:myId,name:meP().name},ok=>toast(ok?'Friend request sent':'They are offline right now. The request goes out when they open Spian, as long as this page stays open.'))};
+  panel=()=>{L.innerHTML='';const sec=t=>{const e=document.createElement('div');e.style.cssText='color:var(--mut);font-size:12px;text-transform:uppercase;margin-top:6px';e.textContent=t;L.append(e)};
+   const row=(html,btns,extra)=>{const r=document.createElement('div');r.className='dc';r.innerHTML=html;if(extra)r.append(extra);btns.forEach(([t,fn,cls])=>{const b=document.createElement('button');b.textContent=t;if(cls)b.className=cls;b.onclick=fn;r.append(b)});L.append(r)};
+   const info=(f,sub)=>'<div style="flex:1;min-width:0"><b>'+esc(f.name)+'</b><div style="color:var(--mut);font-size:12px">'+sub+'</div></div>';
+   if(invs.length){sec('Server invites');invs.slice().forEach(v=>row('<div style="flex:1"><b>'+esc(v.from)+'</b> invited you to <b>'+esc(v.sname)+'</b></div>',[['Join',()=>{invs=invs.filter(x=>x!==v);d.close();add('join',v.code,{name:v.sname});touch()}],['Dismiss',()=>{invs=invs.filter(x=>x!==v);touch()},'ghost']]))}
+   const inc=fl.filter(f=>f.state==='in');if(inc.length){sec('Friend requests');inc.forEach(f=>row(info(f,'wants to be your friend'),[['Accept',()=>{f.state='friend';tell(f.id,{t:'acc',id:myId,name:meP().name},ok=>{if(!ok){f.needAck=true;svF()}});touch()}],['Decline',()=>{tell(f.id,{t:'dec',id:myId,name:meP().name});fl=fl.filter(x=>x!==f);touch()},'ghost']]))}
+   const fr2=fl.filter(f=>f.state==='friend');sec('Friends — '+fr2.length);if(!fr2.length){const e=document.createElement('p');e.style.cssText='color:var(--mut);margin:0';e.textContent='No friends yet. Share your code or add someone else’s.';L.append(e)}
+   fr2.forEach(f=>{let sel=null;if(rs.length){sel=document.createElement('select');sel.className='sl';sel.style.width='auto';sel.innerHTML=rs.map(r=>'<option value="'+esc(r.code)+'">'+esc(r.name||'Server '+r.code)+'</option>').join('')}
+    const btns=[];if(sel)btns.push(['Invite',()=>{const r=rs.find(x=>x.code===sel.value);if(!r)return;tell(f.id,{t:'inv',id:myId,name:meP().name,code:r.code,sname:r.name||''},ok=>toast(ok?'Invite sent to '+f.name:f.name+' is offline right now.'))}]);
+    btns.push(['Remove',()=>sure('Remove '+f.name+' from your friends?',()=>{tell(f.id,{t:'rm',id:myId});fl=fl.filter(x=>x!==f);touch()}),'ghost']);
+    row(info(f,'<i class="sd" style="background:'+(online[f.id]?'#3ddc97':'#8f8aa8')+'"></i>'+(online[f.id]?'Online':'Offline')),btns,sel)});
+   const out=fl.filter(f=>f.state==='out');if(out.length){sec('Waiting for a reply');out.forEach(f=>row(info(f,'code '+esc(f.id)),[['Cancel',()=>{fl=fl.filter(x=>x!==f);touch()},'ghost']]))}};
+  panel()},'wide')}
+ $('mk').onclick=mkDlg;
+ window.addEventListener('message',e=>{const d=e.data;if(!d||!d.spian)return;const r=rs.find(x=>x.code===d.code);
+  if(d.ping&&d.code!==act){dots[d.code]=1;draw()}
+  if(typeof d.busy==='boolean')busyMap[d.code]=d.busy;
+  if(d.leave&&r){rm(d.code);return}
+  if(r){let ch=false;if(typeof d.name==='string'&&d.name&&r.name!==d.name){r.name=d.name.slice(0,40);ch=true}if(typeof d.members==='number')r.members=d.members;
+   if(typeof d.pub==='boolean'&&r.type==='host'&&r.pub!==d.pub){r.pub=d.pub;ch=true;if(!d.pub)unreg(r.code)}if(ch){sv();draw()}if(r.pub)regAll()}});
+ if(!ls.get('spian:noglobal')&&!rs.some(r=>r.code==='global'))rs.unshift({type:'auto',code:'global',name:'Spian Global'});
+ if(rs.length){rs.forEach(frame);show(rs[0].code)}else draw();dirStart();inboxStart();setInterval(regAll,30000);setInterval(sync,30000);setTimeout(checkUpdate,8000);setInterval(checkUpdate,300000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()})}
+if(!IN&&window.parent!==window)setS('You are viewing this inside a preview, which blocks the connection service. Download spian.html and open it directly in Edge or Chrome.',true);
+if(IN){const q=new URLSearchParams(location.hash.slice(1)),c=q.get('code');
+ if(c){$('nm').value=q.get('name')||'Guest';forcedName=q.get('sname')||'';pubOn=q.get('pub')==='1';let n=0;const go=()=>{if(libReady){if(q.get('mode')==='host'){forced=c;$('host').onclick()}else if(q.get('mode')==='auto'){forced=c;$('jc').value=c;$('join').onclick()}else{$('jc').value=c;$('join').onclick()}}else if(n++<100)setTimeout(go,200)};go()}}
+else shell();
+let lastBusy=false;function reportBusy(){const b=!!VS.cid||!!((($('mi')||{}).value)||'').trim();if(b!==lastBusy){lastBusy=b;parent.postMessage({spian:1,code,busy:b},'*')}}
+if(IN)setInterval(reportBusy,2000);
+</script></body></html>
